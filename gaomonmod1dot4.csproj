@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\tModLoader.targets" />
+  <PropertyGroup>
+    <AssemblyName>gaomonmod1dot4</AssemblyName>
+    <TargetFramework>net6.0</TargetFramework>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Items\GloryBag.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="tModLoader.CodeAssist" Version="0.1.*" />
+    <Reference Include="terraguardians">
+        <HintPath>C:\Users\Fable\Documents\My Games\Terraria\tModLoader\ModReader\terraguardians\terraguardians.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>
