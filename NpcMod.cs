@@ -1,11 +1,18 @@
 using Terraria.ModLoader;
 using terraguardians;
 using Terraria;
+using Terraria.DataStructures;
 
 namespace gaomonmod1dot4
 {
 	public class NpcMod : GlobalNPC
 	{
+        // Define a delegate for NPC spawn events
+        public delegate void NpcSpawnEventHandler(NPC npc, IEntitySource source);
+
+        // Define the event based on the delegate
+        public static event NpcSpawnEventHandler NpcSpawned;
+
         public override bool PreAI(NPC npc)
         {
             if (npc.type == Terraria.ID.NPCID.BlueSlime && npc.ai[1] == 0)
@@ -19,6 +26,12 @@ namespace gaomonmod1dot4
                 }
             }
             return base.PreAI(npc);
+        }
+
+        public override void OnSpawn(NPC npc, IEntitySource source)
+        {
+            // Invoke the event when an NPC spawns
+            NpcSpawned?.Invoke(npc, source);
         }
     }
 }

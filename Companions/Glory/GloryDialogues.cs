@@ -24,10 +24,24 @@ namespace gaomonmod1dot4.Companions.Glory
             Mes.Add("Nice to see you [nickname]! what can I do for you?");
             Mes.Add("Hey [nickname], what can I do for you?");
 
+            if (guardian.FriendshipLevel > 5)
+            {
+                Mes.Add("We've been fighting together for a little while now [nickname], and I've got to say, you're really strong!");
+            }
+            if (guardian.FriendshipLevel > 10)
+            {
+                Mes.Add("Hi [nickname]! How's your day been?");
+                Mes.Add("I'm glad I met you, [nickname]. Fighting monsters isn't so bad with friends like you.");
+            }
+            if (guardian.FriendshipLevel > 15)
+            {
+                Mes.Add("Hi [nickname]! Really glad to see you. What do you need?");
+            }
+
             if (Main.bloodMoon)
             {
-                Mes.Add("My master always told me that a warrior is like forging a sword. Only when beaten under pressure and heat is a good one formed. Tonight is a good night for such a task.");
-                Mes.Add("(She gazes up at the moon, brows furrowed in worry, but ready to fight) I lost my family on a night much like this, I won't let the same thing happen again.");
+                Mes.Add("My master told me that becoming a warrior is like forging a sword. Only when under pressure and heat is a strong one formed. Tonight is a good night for such a task.");
+                Mes.Add("I lost my family on a night much like this, I won't let the same thing happen again.");
                 Mes.Add("Stay safe, [nickname], the Blood Moon watches over us.");
             }
             else
@@ -42,6 +56,7 @@ namespace gaomonmod1dot4.Companions.Glory
                     if (Main.eclipse)
                     {
                         Mes.Add("(She gazes up at the eclipse, brows furrowed in worry, but ready to fight)");
+                        Mes.Add("Do you see what happened to the Sun? Something bad is happening...");
                     }
                     else
                     {
@@ -51,7 +66,7 @@ namespace gaomonmod1dot4.Companions.Glory
                 }
                 else
                 {
-                    Mes.Add("I surely would like to take a nap, and enjoy this night. What about you?");
+                    Mes.Add("I surely would like to take a nice nap and enjoy this night. What about you?");
                     Mes.Add("You going to try and get a good rest tonight, [nickname]?");
                     Mes.Add("Don't work too hard, [nickname], breaks are important too.");
                 }
@@ -67,30 +82,61 @@ namespace gaomonmod1dot4.Companions.Glory
                 }
                 if (NPC.AnyNPCs(Terraria.ID.NPCID.Merchant))
                 {
-                    Mes.Add("It's good to have [nn:" + Terraria.ID.NPCID.Merchant + "] around. Having the right tools and potions is important as a good weapon.");
+                    Mes.Add("It's good to have [nn:" + Terraria.ID.NPCID.Merchant + "] around. Having the right tools and potions is just as important as a good weapon.");
                 }
                 if (NPC.AnyNPCs(Terraria.ID.NPCID.Mechanic))
                 {
-                    Mes.Add("I respect [nn:" + Terraria.ID.NPCID.Mechanic + "]. I don't really understand what she does, but her dedication to her craft inspires me");
+                    Mes.Add("I respect [nn:" + Terraria.ID.NPCID.Mechanic + "]. I don't really understand what she makes, but her dedication to her craft inspires me.");
+                }
+                if (NPC.AnyNPCs(Terraria.ID.NPCID.Nurse))
+                {
+                    Mes.Add("[nn:" + Terraria.ID.NPCID.Nurse + "] really is indispensible. She healed my injuries a little while back, I'm not sure what we'd do without her.");
+                }
+                if (NPC.AnyNPCs(Terraria.ID.NPCID.ArmsDealer))
+                {
+                    Mes.Add("If we're going to beat the monsters of this world, having some of the guns [nn:" + Terraria.ID.NPCID.ArmsDealer + "] sell will surely be helpful.");
+                }
+                if (NPC.AnyNPCs(Terraria.ID.NPCID.Guide))
+                {
+                    Mes.Add("Did you know [nn:" + Terraria.ID.NPCID.Guide + "] comes from the 'Order of the Guides'? They're a very well-respected organisation in the world.");
+                }
+                if (NPC.AnyNPCs(Terraria.ID.NPCID.Dryad))
+                {
+                    Mes.Add("Did you know [nn:" + Terraria.ID.NPCID.Dryad + "] is one of the last of her kind? It's really sad what happened to her people... We can't let her down!");
+                    Mes.Add("I was talking to [nn:" + Terraria.ID.NPCID.Dryad + "] recently, and she told me she's over a 100 years old! She might even have been around when Cthulu was still here...");
+                }
+                if (NPC.AnyNPCs(Terraria.ID.NPCID.WitchDoctor))
+                {
+                    Mes.Add("[nn:" + Terraria.ID.NPCID.WitchDoctor + "] sure is a strange one, aren't they?");
+                }
+                if (NPC.AnyNPCs(Terraria.ID.NPCID.PartyGirl))
+                {
+                    Mes.Add("I love having [nn:" + Terraria.ID.NPCID.PartyGirl + "] around, she reminds me of my sister!");
+                }
+                if (NPC.AnyNPCs(Terraria.ID.NPCID.Clothier))
+                {
+                    Mes.Add("I'm glad [nn:" + Terraria.ID.NPCID.Clothier + "] is alright after defeating his curse. He had such a cruel twist of fate...");
+                }
+                if (NPC.AnyNPCs(Terraria.ID.NPCID.Demolitionist))
+                {
+                    Mes.Add("The grenades [nn:" + Terraria.ID.NPCID.Demolitionist + "] sells really do pack a punch! Just make sure not to blow yourself up.");
+                }
+                if (NPC.AnyNPCs(Terraria.ID.NPCID.Steampunker))
+                {
+                    Mes.Add("The stuff [nn:" + Terraria.ID.NPCID.Steampunker + "] makes is amazing! I never knew such technology existed...");
                 }
 
                 if (CompanionsCount >= 1 && CompanionsCount < 3)
                 {
                     Mes.Add("It's pretty dangerous around here, [nickname]. If we could find more people to join us we could keep each other safe.");
                 }
-
                 if (CompanionsCount >= 3)
                 {
                     Mes.Add("Thank you for your effort in building the town, [nickname], it's wonderful having people around.");
                 }
-                if (CompanionsCount >= 10)
+                if (CompanionsCount >= 5)
                 {
                     Mes.Add("It's so lively with so many people around. I think you did a great job, [nickname]!");
-                }
-                if (guardian.IsPlayerRoomMate(MainMod.GetLocalPlayer))
-                {
-                    Mes.Add("Share a room with you? Sure! I haven't had a roommate since I was a kid.");
-                    Mes.Add("Of course! I'll warn you though, I get up really early");
                 }
             }
             if (guardian.IsSleeping)
@@ -123,9 +169,9 @@ namespace gaomonmod1dot4.Companions.Glory
                 case RequestContext.NoRequest:
                     {
                         List<string> Mes = new List<string>();
-                        Mes.Add("Ah, I'm fine right now, [nickname], but thank you for asking!");
+                        Mes.Add("I'm fine right now, [nickname], but thank you for asking!");
 						Mes.Add("That's nice of you to ask! But, I'm good [nickname].");
-						Mes.Add("Thank you for being so willing to help [nickname], but I'm fine for now. Are you sure there isn't anything I can do for you?");
+						Mes.Add("I'm fine for now. Are you sure there isn't anything I can do for you?");
                         return Mes[Terraria.Main.rand.Next(Mes.Count)];
                     }
                 case RequestContext.HasRequest:
@@ -137,7 +183,7 @@ namespace gaomonmod1dot4.Companions.Glory
                 case RequestContext.Completed:
                     {
                         List<string> Mes = new List<string>();
-                        Mes.Add("Amazing! Thank you very much [nickname], you're always so reliable. Here, what would you like?");
+                        Mes.Add("Amazing! Thank you [nickname], you're always so reliable. Here, what would you like?");
 						Mes.Add("Thank you so much [nickname], you're a great help. Here, you can have some of my loot.");
 						Mes.Add("Thank you [nickname]! You deserve a reward.");
                         return Mes[Terraria.Main.rand.Next(Mes.Count)];
@@ -192,11 +238,11 @@ namespace gaomonmod1dot4.Companions.Glory
             switch(context)
             {
                 case MoveOutContext.Success:
-                    return "Alright, I got places I can hang out at so it's not that bad.";
+                    return "Oh, okay, I can do that...";
                 case MoveOutContext.Fail:
                     return "I feel like it would be better if I stayed here longer.";
                 case MoveOutContext.NoAuthorityTo:
-                    return "Uh, you weren't the one to give me this house...";
+                    return "Uh sorry, you weren't the one to give me this house...";
             }
             return base.AskCompanionToMoveOutMessage(companion, context);
         }
@@ -206,7 +252,7 @@ namespace gaomonmod1dot4.Companions.Glory
             switch(context)
             {
                 case JoinMessageContext.Success:
-                    return "Stay close to me [nickname], I'll keep you safe.";
+                    return "Gladly! Stay close to me [nickname], I'll keep you safe.";
                 case JoinMessageContext.FullParty:
                     return "Apologies [nickname], but your party is full right now.";
                 case JoinMessageContext.Fail:
@@ -220,7 +266,7 @@ namespace gaomonmod1dot4.Companions.Glory
             switch(context)
             {
                 case LeaveMessageContext.Success:
-                    return "Stay safe, [nickname]!";
+                    return "You know where to find me. Stay safe, [nickname]!";
                 case LeaveMessageContext.Fail:
                     return "It'd best if I stay with you for a little more, [nickname].";
                 case LeaveMessageContext.AskIfSure:
@@ -228,23 +274,30 @@ namespace gaomonmod1dot4.Companions.Glory
                 case LeaveMessageContext.DangerousPlaceYesAnswer:
                     return "Very well, but don't go dying on me, you hear?";
                 case LeaveMessageContext.DangerousPlaceNoAnswer:
-                    return "Stay close.";
+                    return "Let's get back to safety.";
             }
             return base.LeaveGroupMessages(companion, context);
         }
 
         public override string OnToggleShareBedsMessage(terraguardians.Companion companion, bool Share)
         {
-            if (Share) return "I've slept in worse places.";
-            return "I'd like a bed of my own, if that's okay [nickname].";
+            if (Share)
+            {
+                List<string> Mes = new List<string>();
+                Mes.Add("Sure! I haven't had a roommate since I was a kid.");
+                Mes.Add("I get up really early, I hope my roommate doesn't mind that.");
+                return Mes[Terraria.Main.rand.Next(Mes.Count)];
+
+            }
+            return "Great! I like having my own bed.";
         }
 
         public override string TacticChangeMessage(terraguardians.Companion companion, TacticsChangeContext context) //For when talking about changing their combat behavior.
         {
-            switch(context)
+            switch (context)
             {
                 case TacticsChangeContext.OnAskToChangeTactic:
-                    return "My style? I can handle myself in close quarters combat, and I'm decent with the bow, but I'm awful at magic. [nickname], what do you propose?";
+                    return "My style? I specialise in melee weapons and am okay with ranged weapons, not magic though. [nickname], what do you propose?";
                 case TacticsChangeContext.ChangeToCloseRange:
                     return "Of course! My specialty.";
                 case TacticsChangeContext.ChangeToMidRanged:
@@ -252,14 +305,14 @@ namespace gaomonmod1dot4.Companions.Glory
                 case TacticsChangeContext.ChangeToLongRanged:
                     return "I'll stay back then, but if you need anything sliced up, don't hesitate to bring them to me!";
                 case TacticsChangeContext.Nevermind:
-                    return "So my style is fine then?";
+                    return "Let me know if there's anything else you need.";
             }
             return base.TacticChangeMessage(companion, context);
         }
 
         public override string TalkAboutOtherTopicsMessage(terraguardians.Companion companion, TalkAboutOtherTopicsContext context) //FOr when going to speak about other things.
         {
-            switch(context)
+            switch (context)
             {
                 case TalkAboutOtherTopicsContext.FirstTimeInThisDialogue:
                     return "Anything else [nickname]?";
@@ -270,10 +323,10 @@ namespace gaomonmod1dot4.Companions.Glory
             }
             return base.TalkAboutOtherTopicsMessage(companion, context);
         }
-		
-		public override string SleepingMessage(terraguardians.Companion companion, SleepingMessageContext context)
+
+        public override string SleepingMessage(terraguardians.Companion companion, SleepingMessageContext context)
         {
-            switch(context)
+            switch (context)
             {
                 case SleepingMessageContext.WhenSleeping:
                     {
@@ -285,15 +338,15 @@ namespace gaomonmod1dot4.Companions.Glory
                     switch (Main.rand.Next(2))
                     {
                         default:
-                            return "(She rubs her eyes) Ah... could it not wait to morning, [nickname]?";
+                            return "(She rubs her eyes) *Yawn* Ah... could it not wait to morning, [nickname]?";
                         case 1:
-                            return "(She groggily gets up) Oh... morning [nickname]... Need my help with anything?";
+                            return "(She groggily gets up) *Yawn* Oh... morning [nickname]... Need my help with anything?";
                     }
                 case SleepingMessageContext.OnWokeUpWithRequestActive:
                     switch (Main.rand.Next(2))
                     {
                         default:
-                            return "(She rubs her eyes) Ah, hey [nickname]... did you get along to my request?";
+                            return "(Yawns) Ah, hey [nickname]... did you get along to my request?";
                         case 1:
                             return "(She rubs her eyes) Ah, hey [nickname]... did you get along to my request?";
                     }
@@ -303,7 +356,7 @@ namespace gaomonmod1dot4.Companions.Glory
 
         public override string InteractionMessages(terraguardians.Companion companion, InteractionMessageContext context)
         {
-            switch(context)
+            switch (context)
             {
                 case InteractionMessageContext.OnAskForFavor:
                     return "Of course! What can I do for you, [nickname]?";
@@ -319,8 +372,12 @@ namespace gaomonmod1dot4.Companions.Glory
 
         public override string BuddiesModeMessage(terraguardians.Companion companion, BuddiesModeContext context)
         {
-            switch(context)
+            switch (context)
             {
+                case BuddiesModeContext.AskIfPlayerIsSure:
+                case BuddiesModeContext.PlayerSaysYes:
+                case BuddiesModeContext.PlayerSaysNo:
+                case BuddiesModeContext.NotFriendsEnough:
                 case BuddiesModeContext.AlreadyHasBuddy:
                     return "(She raises an eyebrow) Don't you already have one, [nickname]?";
                 case BuddiesModeContext.Failed:
@@ -330,7 +387,7 @@ namespace gaomonmod1dot4.Companions.Glory
                     }
                     else if (companion.FriendshipLevel > 5)
                     {
-                        return "(She shakes her head) We haven't known each other long enough, [nickname]. Give it time.";
+                        return "(She shakes her head) Sorry [nickname] I don't think we've known each other long enough.";
                     }
                     else
                     {
@@ -342,12 +399,12 @@ namespace gaomonmod1dot4.Companions.Glory
 
         public override string InviteMessages(terraguardians.Companion companion, InviteContext context)
         {
-            switch(context)
+            switch (context)
             {
                 case InviteContext.Success:
                     return "I'm on my way, [nickname]!";
                 case InviteContext.SuccessNotInTime:
-                    return "I am on my way, but it won't be for a while.";
+                    return "I am on my way, but it'll take me a while to get there!";
                 case InviteContext.Failed:
                     return "Sorry, not right now [nickname], I am preoccupied.";
                 case InviteContext.CancelInvite:
@@ -360,10 +417,10 @@ namespace gaomonmod1dot4.Companions.Glory
 
         public override string ReviveMessages(terraguardians.Companion companion, Player target, ReviveContext context)
         {
-            switch(context)
+            switch (context)
             {
                 case ReviveContext.HelpCallReceived:
-                    return "You'll be alright, I'm sure of it.";
+                    return "You'll be alright, I'm make sure of it.";
                 case ReviveContext.RevivingMessage:
                     {
                         List<string> Mes = new List<string>();

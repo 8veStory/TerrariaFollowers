@@ -12,11 +12,5 @@ namespace gaomonmod1dot4
 				new Item(ModContent.ItemType<GloryBag>(), 1),
 			};
 		}
-
-        public override void PostUpdate()
-        {
-
-            base.PostUpdate();
-        }
-    }
+	}
 }

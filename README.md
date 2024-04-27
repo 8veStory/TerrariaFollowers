@@ -1,30 +1,18 @@
 # Todos
-- [ ] Git
+- [ ] Buddy Dialogue
+- [ ] Basic dialogue tree
+	- [ ] What do you think of me so far?
+	- [ ] Have any tips for me?
+		- [ ] Steal guide shit
+	- [ ] Where are you from?
+	- [ ] Birthday?
+	- [ ] Where did you learn to fight?
+- [ ] Spawns at the beginning
+- [ ] Random dialogue that's a bit sporadic i guess?
+- [ ] Ask A to improve writing if possible and what his pointers are
+ s ee if you can usthe getLocalPlayer to actually check if Glory has killed the enemy!
 
-// Dialogue:
-// Cooldown from Stars Above
-// Stars ABove uses PostUpdate to constantly check for environmental shenanigans... let's do the same thing.
-
-// When you're down
-// When you revive them
-// When you enter a new biome
-// Whenever you spawn a boss
-// When they kill an enemy
-// - All the bosses
-// - Certain special enemy types
-// - Generic lines
-
-// Random chatter (timed, no hook?)
-// - Some funy dialogue
-
-// Environment
-// - When it rains
-// - When blood moon happens
-// - When Moon Lord is coming
-
-// COnsider making a TerrarianBaseWithDialogue wrapper that has virtual methods for all this stuff.
-
-// Dialogue Trees:
+/ Dialogue Trees:
 // -> Where did you come from
 // -> Birthday
 // "My birthday? I was born on the 19th of Winter."

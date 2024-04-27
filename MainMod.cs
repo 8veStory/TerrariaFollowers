@@ -7,7 +7,7 @@ namespace gaomonmod1dot4
 	public class MainMod : Mod
 	{
 		public static Groups.FollowersGroup followersGroup; //Custom companion group, so you can distinguish companions of a certain type by their group.
-		public static Player GetLocalPlayer { get { return Main.player[Main.myPlayer]; } }
+		public static Player GetLocalPlayer { get { return Main.player[0]; } }
 
 		public override void Load()
 		{
