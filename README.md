@@ -8,7 +8,6 @@
 	- [ ] Birthday?
 	- [ ] Where did you learn to fight?
 - [ ] Spawns at the beginning
-- [ ] Random dialogue that's a bit sporadic i guess?
 - [ ] Ask A to improve writing if possible and what his pointers are
  s ee if you can usthe getLocalPlayer to actually check if Glory has killed the enemy!
 

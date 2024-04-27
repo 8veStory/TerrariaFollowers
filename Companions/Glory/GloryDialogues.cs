@@ -10,7 +10,7 @@ namespace gaomonmod1dot4.Companions.Glory
         public override string GreetMessages(terraguardians.Companion companion) //Messages for when you just met the companion.
         {
             List<string> Mes = new List<string>();
-            Mes.Add("(You see a young warrior, confident and capable) Oh, another traveller? Nice to meet you, I'm Glory! It's a dangerous world as of recent, so if you need another blade, I'm your girl.");
+            Mes.Add("(You see a young warrior, confident and capable) Oh, another traveller? Nice to meet you, I'm Glory! It's a dangerous world as of recent, so if you need help putting down monsters, I'm your girl.");
             return Mes[Main.rand.Next(Mes.Count)];
         }
 
@@ -35,12 +35,12 @@ namespace gaomonmod1dot4.Companions.Glory
             }
             if (guardian.FriendshipLevel > 15)
             {
-                Mes.Add("Hi [nickname]! Really glad to see you. What do you need?");
+                Mes.Add("Hi [nickname]! How can I help:?");
             }
 
             if (Main.bloodMoon)
             {
-                Mes.Add("My master told me that becoming a warrior is like forging a sword. Only when under pressure and heat is a strong one formed. Tonight is a good night for such a task.");
+                Mes.Add("My master once told me that becoming a warrior is like forging a sword. You need pressure and heat to make a strong one. Tonight is a good night for such a task.");
                 Mes.Add("I lost my family on a night much like this, I won't let the same thing happen again.");
                 Mes.Add("Stay safe, [nickname], the Blood Moon watches over us.");
             }
@@ -375,9 +375,24 @@ namespace gaomonmod1dot4.Companions.Glory
             switch (context)
             {
                 case BuddiesModeContext.AskIfPlayerIsSure:
+                    return "Are you sure? Bonding is a serious thing... I would never leave the side of my buddy.";
                 case BuddiesModeContext.PlayerSaysYes:
+                    return "I'll be by your side for as long as you need!";
                 case BuddiesModeContext.PlayerSaysNo:
+                    return "Okay, [nickname].";
                 case BuddiesModeContext.NotFriendsEnough:
+                    if (companion.FriendshipLevel > 10)
+                    {
+                        return "Sorry [nickname], I like you well enough, but I don't know you well enough for something like that.";
+                    }
+                    else if (companion.FriendshipLevel > 5)
+                    {
+                        return "(She shakes her head) Sorry [nickname] I don't think we've known each other long enough.";
+                    }
+                    else
+                    {
+                        return "Sorry, but no, [nickname], I don't know you well enough for something like that.";
+                    }
                 case BuddiesModeContext.AlreadyHasBuddy:
                     return "(She raises an eyebrow) Don't you already have one, [nickname]?";
                 case BuddiesModeContext.Failed:

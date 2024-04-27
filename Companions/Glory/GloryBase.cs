@@ -22,20 +22,16 @@ namespace gaomonmod1dot4.Companion.Glory
 
         public GloryBase()
         {
-            NpcMod.NpcSpawned += OnBossStart2;
+            NpcMod.NpcSpawned += OnBossStart;
         }
 
         // DESCRIPTION - Name, and info that shows up in the bestiary
         #region Description
         public override string Name => "Glory";
         public override string Description => """
-Glory hails from a great family of warriors who lost their lives defending against a Moon Cultist invasion when she was young. Orphaned, she struck out on her own as a vagabond, honing her craft and learning the way of combat. She now stalks the land where rumours of cult activity appear, and seeks to ruin their world-ending plans.
-
-Stats:
-- Having endured difficult martial training, Glory can take more damage than the average Terrarian.
-- She is proficient with melee weapons, but not with the arts of magic of mana, though she can be decent with the bow.
+An orphaned warrior in training who excels at close quarters combat and tanking. She stalks the land to put an end to the Lunar Cults' world-ending plans.
 """;
-        public override int Age => 17;
+        public override int Age => 18;
         public override Genders Gender => Genders.Female;
         public override BirthdayCalculator SetBirthday => new BirthdayCalculator(Seasons.Winter, 19);
         #endregion
@@ -109,8 +105,12 @@ Stats:
         private static double OnDeathDialogueChance = 0.30;
         private static double OnGenericNPCDefeatDialogueChance = 0.08;
 
-        private static int OnGenericNPCDefeatTimer = 360; // 60 = 1sec because we do 60FPS updates
+        private static int GenericNPCDefeatWaitTime = 360; // 60 = 1sec because we do 60FPS updates
         private int GenericNpcDeathDialogueTimer = 0;
+
+        private static int RandomDialogueWaitTimeMin = 60 * 180;
+        private static int RandomDialogueWaitTimeMax = 60 * 360;
+        private int RandomDialogueTimer = 0;
 
         // Hurt Dialogue
         public override void OnAttackedByNpc(terraguardians.Companion companion, NPC attacker, int Damage, bool Critical)
@@ -189,6 +189,7 @@ Stats:
 
         public override void OnNpcDeath(terraguardians.Companion companion, NPC npc)
         {
+            if (!companion.IsFollower) { return; }
             // CRITTERS
             switch (npc.type)
             {
@@ -212,7 +213,7 @@ Stats:
                 case NPCID.EaterofWorldsHead:
                     companion.SaySomething("The world is a little more at peace now.", true); return;
                 case NPCID.BrainofCthulhu:
-                    companion.SaySomething("I can finally think... I'm glad we could stop it.", true); return;
+                    companion.SaySomething("I can finally think... I'm glad we could put a stop to it.", true); return;
                 case NPCID.QueenBee:
                     companion.SaySomething("Well, at least it wasn't a giant worm... I hate those.", true); return;
                 case NPCID.SkeletronHead:
@@ -242,14 +243,14 @@ Stats:
                 case NPCID.CultistBoss:
                     companion.SaySomething("Good riddance...", true); return;
                 case NPCID.MoonLordHead:
-                    companion.SaySomething("We... actually did it...", true); return;
+                    companion.SaySomething("We... actually did it!", true); return;
             }
 
             if (GenericNpcDeathDialogueTimer > 0) { return; } // Don't speak if we recently spoke
             if (npc.boss)
             {
                 companion.SaySomething("Great job [nickname]! That was a powerful foe.", true);
-                GenericNpcDeathDialogueTimer = OnGenericNPCDefeatTimer;
+                GenericNpcDeathDialogueTimer = GenericNPCDefeatWaitTime;
                 return;
             }
 
@@ -268,20 +269,20 @@ Stats:
                         };
                         string msg = msgs[rng.Next(msgs.Count)];
                         companion.SaySomething(msg, true);
-                        GenericNpcDeathDialogueTimer = OnGenericNPCDefeatTimer;
+                        GenericNpcDeathDialogueTimer = GenericNPCDefeatWaitTime;
                         return;
                     }
                 case NPCID.Tim:
                     companion.SaySomething("What a funny looking skeleton...", true);
-                    GenericNpcDeathDialogueTimer = OnGenericNPCDefeatTimer;
+                    GenericNpcDeathDialogueTimer = GenericNPCDefeatWaitTime;
                     return;
                 case NPCID.TheBride:
                     companion.SaySomething("She had a really pretty dress...", true);
-                    GenericNpcDeathDialogueTimer = OnGenericNPCDefeatTimer;
+                    GenericNpcDeathDialogueTimer = GenericNPCDefeatWaitTime;
                     return;
                 case NPCID.TheGroom:
                     companion.SaySomething("That one had a fancy suit on.", true);
-                    GenericNpcDeathDialogueTimer = OnGenericNPCDefeatTimer;
+                    GenericNpcDeathDialogueTimer = GenericNPCDefeatWaitTime;
                     return;
                 case NPCID.Nymph:
                     {
@@ -292,14 +293,14 @@ Stats:
                         };
                         string msg = msgs[rng.Next(msgs.Count)];
                         companion.SaySomething(msg, true);
-                        GenericNpcDeathDialogueTimer = OnGenericNPCDefeatTimer;
+                        GenericNpcDeathDialogueTimer = GenericNPCDefeatWaitTime;
                         return;
                     }
             }
 
             // GENERIC NPC DEATH
             if (rng.NextDouble() <= 1.0 - OnGenericNPCDefeatDialogueChance) { return; } // Randomly speak
-            GenericNpcDeathDialogueTimer = OnGenericNPCDefeatTimer;
+            GenericNpcDeathDialogueTimer = GenericNPCDefeatWaitTime;
             List<string> texts = new List<string>
             {
                 "Take that!",
@@ -325,6 +326,7 @@ Stats:
 
                 // Blood moon
                 case NPCID.BloodSquid:
+                case NPCID.Drippler:
                 case NPCID.BloodZombie:
                     texts.Add("So much blood!");
                     break;
@@ -430,14 +432,19 @@ Stats:
 
         public override void UpdateCompanion(terraguardians.Companion companion)
         {
+            if (!companion.IsFollower) { return; }
             if (GenericNpcDeathDialogueTimer > 0) { GenericNpcDeathDialogueTimer--; }
+            if (RandomDialogueTimer > 0) { RandomDialogueTimer--; }
             OnBiomePrompt(companion);
+            OnRandomDialogue(companion);
         }
 
         private Player Player => MainMod.GetLocalPlayer;
         //Biomes
         public bool seenDesertBiome;
+        public bool seenSandstorm;
         public bool seenSnowBiome;
+        public bool seenSnow;
         public bool seenCorruptionBiome;
         public bool seenCrimsonBiome;
         public bool seenJungleBiome;
@@ -460,6 +467,11 @@ Stats:
                 companion.SaySomething("It's cold... if anything can survive this extreme weather, it must be tougher than normal.", true);
                 seenSnowBiome = true;
             }
+            if (Player.ZoneSnow && Player.ZoneRain && !seenSnow)
+            {
+                companion.SaySomething("A blizzard. Try and keep warm, [nickname].", true);
+                seenSnow = true;
+            }
             if (Player.ZoneCorrupt && !seenCorruptionBiome)
             {
                 companion.SaySomething("I can feel the evil aura here... stay close to me, [nickname], we're being watched.", true);
@@ -474,6 +486,11 @@ Stats:
             {
                 companion.SaySomething("Wow it's hot... I should have brought sunglasses.", true);
                 seenDesertBiome = true;
+            }
+            if (Player.ZoneSandstorm && !seenSandstorm)
+            {
+                companion.SaySomething("A sandstorm! Try not to get any in your eyes.", true);
+                seenSandstorm = true;
             }
             if (Player.ZoneJungle && !seenJungleBiome)
             {
@@ -502,7 +519,14 @@ Stats:
             }
             if (Player.ZoneSkyHeight && !seenSpaceBiome)
             {
-                companion.SaySomething("The stars are really beautiful, aren't they?", true);
+                List<string> texts = new List<string>
+                {
+                    "The stars are really beautiful, aren't they?",
+                    "It's like I can almost touch the clouds uyp here!",
+                    "I hope I don't slip and fall..."
+                };
+                string text = texts[rng.Next(texts.Count)];
+                companion.SaySomething(text, true);
                 seenSpaceBiome = true;
             }
             if (Player.ZoneDungeon && !seenDungeonBiome)
@@ -510,6 +534,162 @@ Stats:
                 companion.SaySomething("I've heard the Dungeon holds powerful grimoires and swords... as well as challenging traps and foes. Stay vigilant!", true);
                 seenDungeonBiome = true;
             }
+        }
+
+        /// <summary>
+        /// Random dialogue every now and then!
+        /// </summary>
+        /// <param name="companion"></param>
+        public void OnRandomDialogue(terraguardians.Companion companion)
+        {
+            if (RandomDialogueTimer > 0) { return; } // need to wait for timer to finish
+            if (companion.TargettingSomething) { RandomDialogueTimer += 60 * 10; return; } // not when fighting
+
+            List<string> msgs = new List<string>();
+            msgs.Add("Ever wonder who leaves all these chests around?");
+            msgs.Add("Did you see that shooting star last night?");
+            msgs.Add("I wonder where slime comes from...");
+            msgs.Add("I hear somewhere in underground, a great hero once placed his enchanted sword in stone.");
+            msgs.Add("There was a great being who almost destroyed our world long ago, but the Dryads put a stop to that.");
+            msgs.Add("I wonder what brought all these monsters to our world?");
+
+            // Friendship Messages
+            if (companion.FriendshipLevel > 5)
+            {
+                msgs.Add("You're pretty strong, [nickname].");
+            }
+            if (companion.FriendshipLevel > 10)
+            {
+                msgs.Add("Fighting monsters ain't so bad when you're around, [nickname].");
+            }
+
+            // Environmental Messages
+            if (Main.bloodMoon)
+            {
+                msgs.Add("There are a lot of enemies around.");
+                msgs.Add("Keep your guard up.");
+                msgs.Add("I hate nights like these.");
+            }
+            else
+            {
+                int CompanionsCount = WorldMod.GetCompanionsCount;
+                bool HasCompanions = CompanionsCount > 0;
+                if (Main.dayTime)
+                {
+                    if (Main.eclipse)
+                    {
+                        msgs.Add("The eclipse is oddly beautiful.");
+                        msgs.Add("It's like the world has turned upside down.");
+                        msgs.Add("Stay vigilant.");
+                    }
+                    else
+                    {
+                        msgs.Add("It's nice being out in the Sun.");
+                    }
+                }
+                else
+                {
+                    msgs.Add("*Yawns*");
+                    msgs.Add("*Stretches*");
+                }
+                if (Main.raining)
+                {
+                    msgs.Add("I've always liked the rain!");
+                    msgs.Add("Rain is always relaxing.");
+                }
+            }
+
+            // Situational Messages
+            Player player = MainMod.GetLocalPlayer;
+            if (player.statLife < player.statLifeMax2 * 0.4) // Player is at 25% health or less
+            {
+                msgs.Add("You're really beat up, maybe we should hang back a bit.");
+                msgs.Add("Hey, take a potion before you faint!");
+            }
+
+            // Number of enemies
+
+            // Biome Messages
+            if (Player.ZoneBeach)
+            {
+                msgs.Add("I love going to the beach!");
+                msgs.Add("The beach is always nice to be at.");
+            }
+            if (Player.ZoneSnow)
+            {
+                msgs.Add("*Shivers* So cold!");
+            }
+            if (Player.ZoneSnow && Player.ZoneRain)
+            {
+                msgs.Add("It's freezing!");
+                msgs.Add("I can barely see here...");
+            }
+            if (Player.ZoneCorrupt)
+            {
+                msgs.Add("Stay on your guard here.");
+                msgs.Add("This place gives me the creeps!");
+                msgs.Add("I feel like I'm being watched.");
+                msgs.Add("We musn't let this Corruption spread.");
+            }
+            if (Player.ZoneCrimson)
+            {
+                msgs.Add("Man, this place is disgusting.");
+                msgs.Add("Gosh, the smell of this place!");
+                msgs.Add("I feel like I'm being watched.");
+                msgs.Add("We musn't let this Crimson spread.");
+            }
+            if (Player.ZoneDesert)
+            {
+                msgs.Add("So hot...");
+                msgs.Add("I think there's sand in my shoes.");
+            }
+            if (Player.ZoneSandstorm)
+            {
+                msgs.Add("I can barely see in front of me!");
+                msgs.Add("Try not to get sand in your eyes.");
+            }
+            if (Player.ZoneJungle)
+            {
+                msgs.Add("It's so humid in here.");
+                msgs.Add("So many bugs!");
+                msgs.Add("I think I got bitten by something.");
+                msgs.Add("Monsters here are pretty strong.");
+            }
+            if (Player.ZoneGlowshroom)
+            {
+                msgs.Add("Mm... mushrooms.");
+            }
+            if (Player.ZoneMeteor)
+            {
+                msgs.Add("Glad this space rock didn't fall on me.");
+            }
+            if (Player.ZoneUnderworldHeight)
+            {
+                msgs.Add("It's really hot, isn't it?");
+                msgs.Add("These demons and imps give me the creeps.");
+                msgs.Add("Mm, I love lava.");
+            }
+            if (Player.ZoneHallow)
+            {
+                msgs.Add("What a magical place.");
+                msgs.Add("What a pretty place.");
+            }
+            if (Player.ZoneDungeon)
+            {
+                msgs.Add("Be on your guard, there could be traps about.");
+                msgs.Add("I wonder what we can find here?");
+                seenDungeonBiome = true;
+            }
+            if (Player.ZoneSkyHeight)
+            {
+                msgs.Add("Wow, you can almost touch the clouds up here!");
+                msgs.Add("I hope I don't slip and fall...");
+            }
+            string msg = msgs[rng.Next(msgs.Count)];
+            companion.SaySomething(msg, true);
+
+
+            rng.Next(RandomDialogueWaitTimeMin, RandomDialogueWaitTimeMax + 1); // Choose random time for next dialogue
         }
 
         //Bosses
@@ -534,120 +714,13 @@ Stats:
         public bool seenEmpress;
         public bool seenMoonLord;
 
-        public void OnBossStart(terraguardians.Companion companion, IEntitySource source)
+        public void OnBossStart(NPC spawnedNpc, IEntitySource source)
         {
-            if (NPC.AnyNPCs(NPCID.EyeofCthulhu) && !seenEyeOfCthulhu)
-            {
-                companion.SaySomething("It can't be... Be careful! I have your back!", true);
-                seenEyeOfCthulhu = true;
-            }
-            if (NPC.AnyNPCs(NPCID.KingSlime) && !seenKingSlime)
-            {
-                companion.SaySomething("A giant slime!\n Surely it can't be that hard to kill... right?", true);
-                seenKingSlime = true;
-            }
-            if (NPC.AnyNPCs(NPCID.EaterofWorldsHead) && !seenEaterOfWorlds)
-            {
-                companion.SaySomething("This world is not for yours to take, worm!", true);
-                seenEaterOfWorlds = true;
-            }
-            if (NPC.AnyNPCs(NPCID.BrainofCthulhu) && !seenBrainOfCthulhu)
-            {
-                companion.SaySomething("Augh, it's getting into my head...! Let's end this thing!", true);
-                seenBrainOfCthulhu = true;
-            }
-            if (NPC.AnyNPCs(NPCID.QueenBee) && !seenQueenBee)
-            {
-                companion.SaySomething("It's fast, keep your eyes peeled for its dashes!", true);
-                seenQueenBee = true;
-            }
-            if (NPC.AnyNPCs(NPCID.SkeletronHead) && !seenSkeletron)
-            {
-                companion.SaySomething("He looks powerful, stay away from his limbs!", true);
-                seenSkeletron = true;
-            }
-            if (NPC.AnyNPCs(NPCID.Deerclops) && !seenDeerclops)
-            {
-                companion.SaySomething("What the heck is that?! Be on your guard!", true);
-                seenDeerclops = true;
-            }
-            if (NPC.AnyNPCs(NPCID.WallofFlesh) && !seenWallOfFlesh)
-            {
-                companion.SaySomething("So this is it... Keep running, and let's give it a fight to remember!", true);
-                seenWallOfFlesh = true;
-            }
-
-            if (NPC.AnyNPCs(NPCID.WyvernHead) && !seenWyvern)
-            {
-                companion.SaySomething("Uh... do you see that thing in the sky?", true);
-                seenWyvern = true;
-            }
-            if (NPC.AnyNPCs(NPCID.Retinazer) && !seenTwins)
-            {
-                companion.SaySomething("How is this possible...\nthey're just like the Eye... except with more lasers!", true);
-                seenTwins = true;
-            }
-            if (NPC.AnyNPCs(NPCID.QueenSlimeBoss) && !seenQueenSlime)
-            {
-                companion.SaySomething("This one kind of looks... tasty?", true);
-                seenQueenSlime = true;
-            }
-            if (NPC.AnyNPCs(NPCID.HallowBoss) && !seenEmpress)
-            {
-                companion.SaySomething("Maybe we shouldn't have touched that butterfly...", true);
-                seenEmpress = true;
-            }
-            if (NPC.AnyNPCs(NPCID.TheDestroyer) && !seenDestroyer)
-            {
-                companion.SaySomething("The Eater of Worlds... resurrected? We must put this abomination down!", true);
-                seenDestroyer = true;
-            }
-            if (NPC.AnyNPCs(NPCID.SkeletronPrime) && !seenSkeletronPrime)
-            {
-                companion.SaySomething("He's much more powerful than before... I've got your back!", true);
-                seenSkeletronPrime = true;
-            }
-            if (NPC.AnyNPCs(NPCID.Plantera) && !seenPlantera)
-            {
-                companion.SaySomething("Watch out for its tendrils! We'll need a big arena to fight this one.", true);
-                seenPlantera = true;
-            }
-            if (NPC.AnyNPCs(NPCID.Golem) && !seenGolem)
-            {
-                companion.SaySomething("I've heard legends of the Ancient Golem... He's seems slow, but keep your guard up!", true);
-                seenGolem = true;
-            }
-            if (NPC.AnyNPCs(NPCID.DukeFishron) && !seenDukeFishron)
-            {
-                List<string> texts = new List<string>
-                {
-                    "Uh, I think you reeled in the wrong fish!",
-                    "That's not a fish I want to eat!",
-                    "I never really liked seafood..."
-                };
-                string text = texts[rng.Next(texts.Count)];
-                companion.SaySomething(text, true);
-                seenDukeFishron = true;
-            }
-            if (NPC.AnyNPCs(NPCID.CultistBoss) && !seenCultist)
-            {
-                companion.SaySomething("These cultists are a scourge on this world... I won't let them live!", true);
-                seenDukeFishron = true;
-            }
-            if (NPC.AnyNPCs(NPCID.MoonLordHead) && !seenMoonLord)
-            {
-                companion.SaySomething("This is it... No matter what happens, we need to beat him.", true);
-                seenMoonLord = true;
-            }
-        }
-
-        public void OnBossStart2(NPC spawnedNpc, IEntitySource source)
-        {
-            Main.NewText("IS IT A BOSS???");
             if (!spawnedNpc.boss) { return; }
-            Main.NewText("WOW IT IS");
             terraguardians.Companion companion = terraguardians.MainMod.GetActiveCompanions.FirstOrDefault(c => c.Base.Equals(this));
             if (companion == null) { return; }
+            if (!companion.IsFollower) { return; }
+            if (companion.KnockoutStates > KnockoutStates.Awake) { return; } // Don't speak if unconcious
 
             switch (spawnedNpc.type)
             {
