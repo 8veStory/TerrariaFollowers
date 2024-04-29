@@ -1,8 +1,5 @@
 # Todos
-- [ ] Fix the onDeath messages
-- [ ] Fix the onPlayerDeath messages
 - [ ] Add underground messages
-- [ ] Redo some Glory random dialogue
 
 - [ ] Basic dialogue tree
 	- [ ] What do you think of me so far?

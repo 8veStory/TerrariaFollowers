@@ -129,18 +129,21 @@ A young, promising mage who keeps to herself.
             List<string> texts = new List<string>();
             if (currHealthPercentage > 0.7)
             {
-                texts.Add("Ow.");
-                texts.Add("Focus more.");
+                texts.Add("Ow...");
+                texts.Add("That hurts...");
             }
             else if (currHealthPercentage > 0.4)
             {
                 texts.Add("Ow...");
-                texts.Add("You must try harder than that.");
+                texts.Add("Stop...");
+                texts.Add("No...");
             }
             else
             {
                 texts.Add("It's getting dire...");
                 texts.Add("I need assistance...");
+                texts.Add("Kindly refrain...");
+                texts.Add("This is getting bad...");
                 texts.Add("Ah...");
             }
             string text = texts[rng.Next(texts.Count)];
@@ -154,7 +157,7 @@ A young, promising mage who keeps to herself.
             if (rng.NextDouble() <= 1.0 - OnOtherCompanionDeathDialogueChance) { return; }
             List<string> texts = new List<string>
             {
-                $"We've lost {target.name}...",
+                $"We... we lost {target.name}...",
                 $"{target.name} is down..."
             };
             string text = texts[rng.Next(texts.Count)];
@@ -180,8 +183,9 @@ A young, promising mage who keeps to herself.
             if (rng.NextDouble() <= 1.0 - OnDeathDialogueChance) { return; }
             List<string> texts = new List<string>
             {
-                "I cannot... not yet...",
-                "So this is it...?",
+                "I guess this is it...",
+                "I still want to learn more...",
+                "Forgive me, everyone...",
                 "Forgive me, everyone...",
             };
             string text = texts[rng.Next(texts.Count)];
@@ -303,15 +307,15 @@ A young, promising mage who keeps to herself.
             GenericNpcDeathDialogueTimer = GenericNPCDefeatWaitTime;
             List<string> texts = new List<string>
             {
-                "Another one down.",
-                "It's dead",
-                "I wish it hadn't come to this..."
+                "One less to worry about...",
+                "We must keep going...",
+                "That was too close..."
             };
             float currHealthPercentage = (float)companion.Health / (float)companion.MaxHealth;
             if (currHealthPercentage < 0.4)
             {
-                texts.Add("That was rather close, wasn't it?");
-                texts.Add("We must be careful...");
+                texts.Add("That was scary...");
+                texts.Add("that was much too close...");
             }
             switch (npc.type)
             {

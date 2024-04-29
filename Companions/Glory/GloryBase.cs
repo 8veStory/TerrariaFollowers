@@ -40,6 +40,16 @@ namespace gaomonmod1dot4.Companion.Glory
             }
         }
 
+        public override void UpdateCompanion(terraguardians.Companion companion)
+        {
+            if (!companion.IsFollower) { return; }
+            if (GenericNpcDeathDialogueTimer > 0) { GenericNpcDeathDialogueTimer--; }
+            if (RandomDialogueTimer > 0) { RandomDialogueTimer--; }
+            if (OnPlayerHitDialogueTimer > 0) { OnPlayerHitDialogueTimer--; }
+            OnBiomePrompt(companion);
+            OnRandomDialogue(companion);
+        }
+
         // DESCRIPTION - Name, and info that shows up in the bestiary
         #region Description
         public override string Name => "Glory";
@@ -115,18 +125,22 @@ An orphaned warrior in training who excels at close quarters combat and tanking.
         // DIALOGUE - All dialogue, including situational, periodic, on hit, etc.
         #region Dialogue
         protected override CompanionDialogueContainer GetDialogueContainer => new GloryDialogues();
-        private const double OnHurtByNpcDialogueChance = 1.00;
-        private const double OnOtherCompanionDeathDialogueChance = 0.50;
+        private const double OnHurtByNpcDialogueChance = 0.13;
+        private const double OnOtherCompanionDeathDialogueChance = 1.00;
         private const double OnDeathDialogueChance = 1.00;
-        private const double OnGenericNPCDefeatDialogueChance = 0.08;
-        private const double OnPlayerHurtDialogueChance = 1.00;
+
+
+        private const int OnPlayerHitDialogueWaitTime = 20 * 60;
+        private int OnPlayerHitDialogueTimer = 0;
+        private const double OnPlayerHurtDialogueChance = 0.75;
 
         private const int GenericNPCDefeatWaitTime = 360; // 60 = 1sec because we do 60FPS updates
         private int GenericNpcDeathDialogueTimer = 0;
 
 
-        private const int RandomDialogueWaitTimeMin = 60 * 180;
-        private const int RandomDialogueWaitTimeMax = 60 * 360;
+        private const int RandomDialogueWaitTimeMin = 180 * 60;
+        private const int RandomDialogueWaitTimeMax = 360 * 60;
+        private const double OnGenericNPCDefeatDialogueChance = 0.08;
         private int RandomDialogueTimer = 0;
 
         // Hurt Dialogue
@@ -199,15 +213,11 @@ An orphaned warrior in training who excels at close quarters combat and tanking.
         public void OnPlayerHurt(Player player, Player.HurtInfo hurtInfo)
         {
             bool playerIsAttacked = player.whoAmI == Main.myPlayer;
-            Main.NewText($"Player Attacked: {playerIsAttacked}");
-            Main.NewText($"Player: {player.whoAmI}");
-            Main.NewText($"Main: {Main.myPlayer}");
-            Main.NewText($"Companion: {Companion.whoAmI}");
             if (!playerIsAttacked) { 
                 if (Companion.whoAmI == player.whoAmI) {
                     Main.NewText("It's GLORY!");
+                    OnCompanionAttacked(hurtInfo.Damage);
                 }
-                OnCompanionAttacked(hurtInfo.Damage);
                 return;
             }
             Main.NewText("It's PLAYER!");
@@ -229,13 +239,15 @@ An orphaned warrior in training who excels at close quarters combat and tanking.
             }
 
             // GENERIC HIT MESSAGES
+            Main.NewText("LOL");
             if (rng.NextDouble() <= 1.0 - OnPlayerHurtDialogueChance) { return; }
-            Main.NewText(player.statLife < player.statLifeMax2 * 0.4);
 
             if (player.statLife < player.statLifeMax2 * 0.4) // Player is at 40% health or less
             {
+                if (OnPlayerHitDialogueTimer > 0) { return; }
+                OnPlayerHitDialogueTimer = OnPlayerHitDialogueWaitTime;
                 texts.Add("Hey, take a potion before you faint!");
-                texts.Add("You're hurt, stay back!");
+                texts.Add("You're hurt!");
                 text = texts[rng.Next(texts.Count)];
                 Companion.SaySomething(text, Companion.IsFollower);
             } else {
@@ -247,13 +259,10 @@ An orphaned warrior in training who excels at close quarters combat and tanking.
         public void OnCompanionAttacked(int Damage)
         {
             terraguardians.Companion companion = Companion;
-            Main.NewText($"nani1");
             List<string> texts = new List<string>();
             string text;
 
             // DEATH
-            Main.NewText($"Potential Killing Blow: {companion.Health}");
-            Main.NewText($"After the fact: {companion.Health - Damage}");
             bool isLethal = (companion.Health - Damage) <= 0;
             if (isLethal)
             {
@@ -262,6 +271,7 @@ An orphaned warrior in training who excels at close quarters combat and tanking.
                 texts.Add("No... Not now...");
                 texts.Add("Damn it...");
                 texts.Add("It's dark...");
+                texts.Add("Not again... I can't let...");
                 text = texts[rng.Next(texts.Count)];
                 companion.SaySomething(text, companion.IsFollower);
                 return;
@@ -276,18 +286,25 @@ An orphaned warrior in training who excels at close quarters combat and tanking.
             {
                 texts.Add("Ow!");
                 texts.Add("Ouch!");
+                texts.Add("Ugh!");
+                texts.Add("Hmpf!");
                 texts.Add("Come at me!");
                 texts.Add("You'll have to hit harder than that!");
+                texts.Add("You'll need more than that!");
             }
             else if (currHealthPercentage > 0.4)
             {
                 texts.Add("Ow!");
+                texts.Add("Ugh!");
+                texts.Add("Hmpf!");
                 texts.Add("Come at me!");
                 texts.Add("You'll pay for that!");
+                texts.Add("You'll need more than that!");
             }
             else
             {
                 texts.Add("I'm wounded...");
+                texts.Add("I'm hurt...");
                 texts.Add("I'm fading...");
                 texts.Add("Augh!");
                 texts.Add("Damn it!");
@@ -330,18 +347,6 @@ An orphaned warrior in training who excels at close quarters combat and tanking.
         public override void OnNpcDeath(terraguardians.Companion companion, NPC npc)
         {
             if (!companion.IsFollower) { return; }
-            // CRITTERS
-            switch (npc.type)
-            {
-                case NPCID.Goldfish:
-                case NPCID.Bunny:
-                case NPCID.Bird:
-                case NPCID.Duck:
-                case NPCID.Duck2:
-                case NPCID.DuckWhite:
-                case NPCID.DuckWhite2:
-                    return;
-            }
 
             // BOSS DEATH
             switch (npc.type)
@@ -441,14 +446,22 @@ An orphaned warrior in training who excels at close quarters combat and tanking.
             // GENERIC NPC DEATH
             if (rng.NextDouble() <= 1.0 - OnGenericNPCDefeatDialogueChance) { return; } // Randomly speak
             GenericNpcDeathDialogueTimer = GenericNPCDefeatWaitTime;
-            List<string> texts = new List<string>
-            {
-                "Take that!",
-                "Another one down!",
-                "That's one.",
-                "Got it!",
-                $"{npc.FullName} down!"
-            };
+
+            // CRITTERS 
+            List<string> texts = new List<string>();
+            string text;
+            if (npc.CountsAsACritter) {
+                texts.Add("That was a close one...");
+                texts.Add("Poor thing...");
+                text = texts[rng.Next(texts.Count)];
+                companion.SaySomething(text, true);
+            }
+
+            texts.Add("Take that!");
+            texts.Add("Another one down!");
+            texts.Add("That's one.");
+            texts.Add("Got it!");
+            texts.Add($"{npc.FullName} down!");
             float currHealthPercentage = (float)companion.Health / (float)companion.MaxHealth;
             if (currHealthPercentage < 0.4)
             {
@@ -469,6 +482,7 @@ An orphaned warrior in training who excels at close quarters combat and tanking.
                 case NPCID.Drippler:
                 case NPCID.BloodZombie:
                     texts.Add("So much blood!");
+                    texts.Add("Blood everywhere...");
                     break;
 
                 // Corruption
@@ -565,18 +579,9 @@ An orphaned warrior in training who excels at close quarters combat and tanking.
                     break;
             }
 
-            string text = texts[rng.Next(texts.Count)];
+            text = texts[rng.Next(texts.Count)];
             companion.SaySomething(text, true);
             base.OnNpcDeath(companion, npc);
-        }
-
-        public override void UpdateCompanion(terraguardians.Companion companion)
-        {
-            if (!companion.IsFollower) { return; }
-            if (GenericNpcDeathDialogueTimer > 0) { GenericNpcDeathDialogueTimer--; }
-            if (RandomDialogueTimer > 0) { RandomDialogueTimer--; }
-            OnBiomePrompt(companion);
-            OnRandomDialogue(companion);
         }
 
         private Player Player => MainMod.GetLocalPlayer;
