@@ -1,62 +1,49 @@
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using Terraria.Audio;
 using System.Collections.Generic;
 using terraguardians;
-using gaomonmod1dot4.Companions.Glory;
 using Terraria.Graphics;
 using System.Linq;
 using System;
 using System.Configuration;
 using Terraria.Utilities;
 using Terraria.DataStructures;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using gaomonmod1dot4.Companions.Hecate;
 
-namespace gaomonmod1dot4.Companion.Glory
+namespace gaomonmod1dot4.Companion.Hecate
 {
-    public class GloryBase : TerrarianBase
+    public class HecateBase : TerrarianBase
     {
         public override CompanionGroup GetCompanionGroup => MainMod.followersGroup; // Assigning the Digimon group to the companion. You can take TerraGuardian groups from the MainMod script of TerraGuardian.
         private static Random rng = new Random();
 
-        public GloryBase()
+        public HecateBase()
         {
             NpcMod.NpcSpawned += OnBossStart;
-            PlayerMod.PlayerHurt += OnPlayerHurt;
-        }
-
-        private terraguardians.Companion _companion = null;
-        private terraguardians.Companion Companion
-        {
-            get
-            {
-                if (_companion == null)
-                {
-                    _companion = terraguardians.MainMod.GetActiveCompanions.FirstOrDefault(c => c.Base.Equals(this));
-                }
-                return _companion;
-            }
         }
 
         // DESCRIPTION - Name, and info that shows up in the bestiary
         #region Description
-        public override string Name => "Glory";
+        public override string Name => "Hecate";
         public override string Description => """
-An orphaned warrior in training who excels at close quarters combat and tanking. She stalks the land to put an end to the Lunar Cults' world-ending plans.
+A young, promising mage who keeps to herself.
 """;
-        public override int Age => 18;
+        public override int Age => 19;
         public override Genders Gender => Genders.Female;
-        public override BirthdayCalculator SetBirthday => new BirthdayCalculator(Seasons.Winter, 19);
+        public override BirthdayCalculator SetBirthday => new BirthdayCalculator(Seasons.Summer, 15);
         #endregion
 
         // STATS - HP, Mana, Speed, scaling, etc.
         #region Stats
-        public override int InitialMaxHealth => 160; // Glory is more tanky.
-        public override int ManaPerManaCrystal => 10; // Glory is incompetent at magic
-        public override float AccuracyPercent => 0.70f; // Glory is decent with ranged weaponry
+        public override int InitialMaxHealth => 120; // Glory is more tanky.
+        public override int InitialMaxMana => 200;
+        public override int ManaPerManaCrystal => 30; // Glory is incompetent at magic
+        public override float AccuracyPercent => 0.95f; // Glory is decent with ranged weaponry
         public override float AgilityPercent => base.AgilityPercent; // Glory has average Terrarian speed
+        public override CombatTactics DefaultCombatTactic => CombatTactics.LongRange;
 
         #endregion
 
@@ -84,15 +71,15 @@ An orphaned warrior in training who excels at close quarters combat and tanking.
             {
                 return new TerrarianCompanionInfo()
                 {
-                    HairStyle = 9,
-                    SkinVariant = 5,
-                    HairColor = new Color(139, 69, 19),
-                    EyeColor = new Color(47, 217, 64),
-                    SkinColor = new Color(229, 189, 35),
-                    ShirtColor = new Color(184, 61, 29),
-                    UndershirtColor = new Color(169, 185, 211),
-                    PantsColor = new Color(119, 82, 0),
-                    ShoesColor = new Color(160, 105, 60)
+                    HairStyle = 5,
+                    SkinVariant = 7,
+                    HairColor = new Color(102, 47, 223),
+                    EyeColor = new Color(102, 47, 223),
+                    SkinColor = new Color(225, 190, 173),
+                    ShirtColor = new Color(70, 64, 49),
+                    UndershirtColor = new Color(255, 255, 255),
+                    PantsColor = new Color(255, 255, 255),
+                    ShoesColor = new Color(70, 64, 49)
                 };
             }
         }
@@ -104,228 +91,103 @@ An orphaned warrior in training who excels at close quarters combat and tanking.
         {
             InitialInventoryItems = new InitialItemDefinition[]
             {
-                new InitialItemDefinition(ItemID.CopperBroadsword),
-                new InitialItemDefinition(ItemID.WoodenBow),
-                new InitialItemDefinition(ItemID.WoodenArrow, 85),
-                new InitialItemDefinition(ItemID.HealingPotion, 15)
+                new InitialItemDefinition(ItemID.CopperShortsword),
+                new InitialItemDefinition(ItemID.AmethystStaff),
+                new InitialItemDefinition(ItemID.SlimeStaff),
+                new InitialItemDefinition(ItemID.HealingPotion, 10),
+                new InitialItemDefinition(ItemID.ManaPotion, 10),
+                new InitialItemDefinition(ItemID.FamiliarShirt, 1),
+                new InitialItemDefinition(ItemID.FamiliarPants, 1),
+                new InitialItemDefinition(ItemID.FamiliarWig, 1),
             };
         }
         #endregion
 
         // DIALOGUE - All dialogue, including situational, periodic, on hit, etc.
         #region Dialogue
-        protected override CompanionDialogueContainer GetDialogueContainer => new GloryDialogues();
-        private const double OnHurtByNpcDialogueChance = 1.00;
-        private const double OnOtherCompanionDeathDialogueChance = 0.50;
-        private const double OnDeathDialogueChance = 1.00;
-        private const double OnGenericNPCDefeatDialogueChance = 0.08;
-        private const double OnPlayerHurtDialogueChance = 1.00;
+        protected override CompanionDialogueContainer GetDialogueContainer => new HecateDialogues();
+        private static double OnAttackDialogueChance = 0.10;
+        private static double OnOtherCompanionDeathDialogueChance = 0.50;
+        private static double OnDeathDialogueChance = 0.30;
+        private static double OnGenericNPCDefeatDialogueChance = 0.08;
 
-        private const int GenericNPCDefeatWaitTime = 360; // 60 = 1sec because we do 60FPS updates
+        private static int GenericNPCDefeatWaitTime = 360; // 60 = 1sec because we do 60FPS updates
         private int GenericNpcDeathDialogueTimer = 0;
 
-
-        private const int RandomDialogueWaitTimeMin = 60 * 180;
-        private const int RandomDialogueWaitTimeMax = 60 * 360;
+        private static int RandomDialogueWaitTimeMin = 60 * 180;
+        private static int RandomDialogueWaitTimeMax = 60 * 360;
         private int RandomDialogueTimer = 0;
 
         // Hurt Dialogue
-        // public override void OnAttackedByNpc(terraguardians.Companion companion, NPC attacker, int Damage, bool Critical)
-        // {
-        //     Main.NewText($"nani1");
-        //     List<string> texts = new List<string>();
-        //     string text;
+        public override void OnAttackedByNpc(terraguardians.Companion companion, NPC attacker, int Damage, bool Critical)
+        {
+            // Should we generate dialogue?
+            if (rng.NextDouble() <= 1.0 - OnAttackDialogueChance) { return; }
 
-        //     // DEATH
-        //     Main.NewText($"Potential Killing Blow: {companion.Health}");
-        //     Main.NewText($"After the fact: {companion.Health - Damage}");
-        //     bool isLethal = (companion.Health - Damage) <= 0;
-        //     if (isLethal)
-        //     {
-        //         if (rng.NextDouble() <= 1.0 - OnDeathDialogueChance) { return; }
-        //         texts.Add("No, I can still...");
-        //         texts.Add("No... Not now...");
-        //         texts.Add("Damn it...");
-        //         texts.Add("It's dark...");
-        //         text = texts[rng.Next(texts.Count)];
-        //         companion.SaySomething(text, companion.IsFollower);
-        //         return;
-        //     }
+            // Get dialogue randomly
+            float currHealthPercentage = (float)companion.Health / (float)companion.MaxHealth;
+            List<string> texts = new List<string>();
+            if (currHealthPercentage > 0.7)
+            {
+                texts.Add("Ow.");
+                texts.Add("Focus more.");
+            }
+            else if (currHealthPercentage > 0.4)
+            {
+                texts.Add("Ow...");
+                texts.Add("You must try harder than that.");
+            }
+            else
+            {
+                texts.Add("It's getting dire...");
+                texts.Add("I need assistance...");
+                texts.Add("Ah...");
+            }
+            string text = texts[rng.Next(texts.Count)];
 
-        //     // Should we generate dialogue?
-        //     if (rng.NextDouble() <= 1.0 - OnAttackDialogueChance) { return; }
-
-        //     // Get dialogue randomly
-        //     float currHealthPercentage = (float)companion.Health / (float)companion.MaxHealth;
-        //     if (currHealthPercentage > 0.7)
-        //     {
-        //         texts.Add("Ow!");
-        //         texts.Add("Ouch!");
-        //         texts.Add("Come at me!");
-        //         texts.Add("You'll have to hit harder than that!");
-        //     }
-        //     else if (currHealthPercentage > 0.4)
-        //     {
-        //         texts.Add("Ow!");
-        //         texts.Add("Come at me!");
-        //         texts.Add("You'll pay for that!");
-        //     }
-        //     else
-        //     {
-        //         texts.Add("I'm wounded...");
-        //         texts.Add("I'm fading...");
-        //         texts.Add("Augh!");
-        //         texts.Add("Damn it!");
-        //     }
-        //     text = texts[rng.Next(texts.Count)];
-
-        //     // Display dialogue in chat and as a popoup
-        //     companion.SaySomething(text, companion.IsFollower);
-        // }
+            // Display dialogue in chat and as a popoup
+            companion.SaySomething(text, true);
+        }
 
         public override void OnCompanionDeath(terraguardians.Companion companion, terraguardians.Companion target)
         {
             if (rng.NextDouble() <= 1.0 - OnOtherCompanionDeathDialogueChance) { return; }
             List<string> texts = new List<string>
             {
-                $"No, {target.name} is down!",
-                $"Damn it, {target.name} is down!"
+                $"We've lost {target.name}...",
+                $"{target.name} is down..."
             };
             string text = texts[rng.Next(texts.Count)];
 
             companion.SaySomething(text, true);
         }
 
-        public void OnPlayerHurt(Player player, Player.HurtInfo hurtInfo)
+        public override void OnPlayerDeath(terraguardians.Companion companion, Player player)
         {
-            bool playerIsAttacked = player.whoAmI == Main.myPlayer;
-            Main.NewText($"Player Attacked: {playerIsAttacked}");
-            Main.NewText($"Player: {player.whoAmI}");
-            Main.NewText($"Main: {Main.myPlayer}");
-            Main.NewText($"Companion: {Companion.whoAmI}");
-            if (!playerIsAttacked) { 
-                if (Companion.whoAmI == player.whoAmI) {
-                    Main.NewText("It's GLORY!");
-                }
-                OnCompanionAttacked(hurtInfo.Damage);
-                return;
-            }
-            Main.NewText("It's PLAYER!");
-
-            // DEATH MESSAGES
-            List<string> texts = new List<string>();
-            string text;
-
-            bool isLethal = (player.statLife - hurtInfo.Damage) <= 0;
-            if (isLethal)
+            List<string> texts = new List<string>
             {
-                texts.Add("No, [nickname]!");
-                texts.Add("Don't die on me, [nickname]!");
-                texts.Add("Stay with me, [nickname]!");
-                texts.Add("You... I'll kill you all!");
-                text = texts[rng.Next(texts.Count)];
-                Companion.SaySomething(text, Companion.IsFollower);
-                return;
-            }
-
-            // GENERIC HIT MESSAGES
-            if (rng.NextDouble() <= 1.0 - OnPlayerHurtDialogueChance) { return; }
-            Main.NewText(player.statLife < player.statLifeMax2 * 0.4);
-
-            if (player.statLife < player.statLifeMax2 * 0.4) // Player is at 40% health or less
-            {
-                texts.Add("Hey, take a potion before you faint!");
-                texts.Add("You're hurt, stay back!");
-                text = texts[rng.Next(texts.Count)];
-                Companion.SaySomething(text, Companion.IsFollower);
-            } else {
-                return;
-            }
-            return;
+                "No, [nickname]!",
+                "Stay with us, [nickname]!",
+                $"[nickname], I won't let this be the end!"
+            };
+            string text = texts[rng.Next(texts.Count)];
+            companion.SaySomething(text, true);
+            base.OnPlayerDeath(companion, player);
         }
 
-        public void OnCompanionAttacked(int Damage)
+        public override void OnDeath(terraguardians.Companion companion)
         {
-            terraguardians.Companion companion = Companion;
-            Main.NewText($"nani1");
-            List<string> texts = new List<string>();
-            string text;
-
-            // DEATH
-            Main.NewText($"Potential Killing Blow: {companion.Health}");
-            Main.NewText($"After the fact: {companion.Health - Damage}");
-            bool isLethal = (companion.Health - Damage) <= 0;
-            if (isLethal)
+            if (rng.NextDouble() <= 1.0 - OnDeathDialogueChance) { return; }
+            List<string> texts = new List<string>
             {
-                if (rng.NextDouble() <= 1.0 - OnDeathDialogueChance) { return; }
-                texts.Add("No, I can still...");
-                texts.Add("No... Not now...");
-                texts.Add("Damn it...");
-                texts.Add("It's dark...");
-                text = texts[rng.Next(texts.Count)];
-                companion.SaySomething(text, companion.IsFollower);
-                return;
-            }
-
-            // Should we generate dialogue?
-            if (rng.NextDouble() <= 1.0 - OnHurtByNpcDialogueChance) { return; }
-
-            // Get dialogue randomly
-            float currHealthPercentage = (float)companion.Health / (float)companion.MaxHealth;
-            if (currHealthPercentage > 0.7)
-            {
-                texts.Add("Ow!");
-                texts.Add("Ouch!");
-                texts.Add("Come at me!");
-                texts.Add("You'll have to hit harder than that!");
-            }
-            else if (currHealthPercentage > 0.4)
-            {
-                texts.Add("Ow!");
-                texts.Add("Come at me!");
-                texts.Add("You'll pay for that!");
-            }
-            else
-            {
-                texts.Add("I'm wounded...");
-                texts.Add("I'm fading...");
-                texts.Add("Augh!");
-                texts.Add("Damn it!");
-            }
-            text = texts[rng.Next(texts.Count)];
-
-            // Display dialogue in chat and as a popoup
-            companion.SaySomething(text, companion.IsFollower);
+                "I cannot... not yet...",
+                "So this is it...?",
+                "Forgive me, everyone...",
+            };
+            string text = texts[rng.Next(texts.Count)];
+            companion.SaySomething(text, true);
+            base.OnDeath(companion);
         }
-
-        // public void OnPlayerDeath(terraguardians.Companion companion, Player player)
-        // {
-        //     List<string> texts = new List<string>
-        //     {
-        //         "No, [nickname]!",
-        //         "Don't die on me, [nickname]!",
-        //         "Stay with me, [nickname]!",
-        //         "You... I'll kill you all!"
-        //     };
-        //     string text = texts[rng.Next(texts.Count)];
-        //     companion.SaySomething(text, true);
-        //     base.OnPlayerDeath(companion, player);
-        // }
-
-        // public override void OnDeath(terraguardians.Companion companion)
-        // {
-        //     if (rng.NextDouble() <= 1.0 - OnDeathDialogueChance) { return; }
-        //     List<string> texts = new List<string>
-        //     {
-        //         "No, I can still...",
-        //         "No... Not now...",
-        //         "Damn it...",
-        //         "It's dark...",
-        //     };
-        //     string text = texts[rng.Next(texts.Count)];
-        //     companion.SaySomething(text, true);
-        //     base.OnDeath(companion);
-        // }
 
         public override void OnNpcDeath(terraguardians.Companion companion, NPC npc)
         {
@@ -343,49 +205,47 @@ An orphaned warrior in training who excels at close quarters combat and tanking.
                     return;
             }
 
-            // BOSS DEATH
             switch (npc.type)
             {
                 case NPCID.EyeofCthulhu:
-                    companion.SaySomething("Great job! I admit, when it showed its teeth, I had my doubts...", true); return;
+                    companion.SaySomething("We did well. That was a test of our resolve.", true); return;
                 case NPCID.KingSlime:
-                    companion.SaySomething("I feel... really sticky after that...", true); return;
+                    companion.SaySomething("Such a messy ordeal...", true); return;
                 case NPCID.EaterofWorldsHead:
-                    companion.SaySomething("The world is a little more at peace now.", true); return;
+                    companion.SaySomething("We've restored a bit more balance today.", true); return;
                 case NPCID.BrainofCthulhu:
-                    companion.SaySomething("I can finally think... I'm glad we could put a stop to it.", true); return;
+                    companion.SaySomething("Well done everyone.", true); return;
                 case NPCID.QueenBee:
-                    companion.SaySomething("Well, at least it wasn't a giant worm... I hate those.", true); return;
+                    companion.SaySomething("Certainly a tough opponent, but manageable.", true); return;
                 case NPCID.SkeletronHead:
-                    companion.SaySomething("The poor clothier... I have a feeling that's not the last we'll see of him.", true); return;
+                    companion.SaySomething("Womp womp.", true); return;
                 case NPCID.Deerclops:
-                    companion.SaySomething("What a strange creature... I'm glad we took care of it.", true); return;
+                    companion.SaySomething("Such an odd creature... I hope it finds peace.", true); return;
                 case NPCID.WallofFlesh:
-                    companion.SaySomething("The world feels... different...", true); return;
+                    companion.SaySomething("The world has changed... Can you feel it?", true); return;
                 case NPCID.WyvernHead:
-                    companion.SaySomething("I have to admit, it was kind of cute...", true); return;
+                    companion.SaySomething("Its grace in the sky was almost enchanting...", true); return;
                 case NPCID.Retinazer:
-                    companion.SaySomething("We brought an end to those two. Great job, [nickname]!", true); return;
+                    companion.SaySomething("We have ended their watch. Well done, [nickname].", true); return;
                 case NPCID.QueenSlimeBoss:
-                    companion.SaySomething("I feel... really, really sticky right now...", true); return;
+                    companion.SaySomething("That was... unexpectedly sticky.", true); return;
                 case NPCID.HallowBoss:
-                    companion.SaySomething("I feel kind of feel bad putting an end to such a pretty creature...", true); return;
+                    companion.SaySomething("It’s sad, yet necessary to maintain balance.", true); return;
                 case NPCID.TheDestroyer:
-                    companion.SaySomething("We took it down, well-fought [nickname]!", true); return;
+                    companion.SaySomething("Together, we've overcome great adversity, [nickname].", true); return;
                 case NPCID.SkeletronPrime:
-                    companion.SaySomething("Great job, [nickname].", true); return;
+                    companion.SaySomething("A commendable effort, [nickname].", true); return;
                 case NPCID.Plantera:
-                    companion.SaySomething("That was difficult...", true); return;
+                    companion.SaySomething("That was a challenging trial...", true); return;
                 case NPCID.Golem:
-                    companion.SaySomething("We did it!", true); return;
+                    companion.SaySomething("Victory, at last! We did it together.", true); return;
                 case NPCID.DukeFishron:
-                    companion.SaySomething("I'm never touching another fish again...", true); return;
+                    companion.SaySomething("Such a peculiar battle... I need a moment.", true); return;
                 case NPCID.CultistBoss:
-                    companion.SaySomething("Good riddance...", true); return;
+                    companion.SaySomething("Finally, it's over. Let's move forward.", true); return;
                 case NPCID.MoonLordHead:
-                    companion.SaySomething("We... actually did it!", true); return;
+                    companion.SaySomething("We've achieved the impossible!", true); return;
             }
-
             if (GenericNpcDeathDialogueTimer > 0) { return; } // Don't speak if we recently spoke
             if (npc.boss)
             {
@@ -443,106 +303,86 @@ An orphaned warrior in training who excels at close quarters combat and tanking.
             GenericNpcDeathDialogueTimer = GenericNPCDefeatWaitTime;
             List<string> texts = new List<string>
             {
-                "Take that!",
-                "Another one down!",
-                "That's one.",
-                "Got it!",
-                $"{npc.FullName} down!"
+                "Another one down.",
+                "It's dead",
+                "I wish it hadn't come to this..."
             };
             float currHealthPercentage = (float)companion.Health / (float)companion.MaxHealth;
             if (currHealthPercentage < 0.4)
             {
-                texts.Add("That was a close one...");
-                texts.Add("Whew...");
+                texts.Add("That was rather close, wasn't it?");
+                texts.Add("We must be careful...");
             }
             switch (npc.type)
             {
                 case NPCID.Zombie:
-                    texts.Add("Rest in peace...");
+                    texts.Add("Rest now, no more wandering...");
                     break;
                 case NPCID.DemonEye:
-                    texts.Add("I don't like how they stare at me...");
+                    texts.Add("Such intense gazes, now put to rest.");
                     break;
 
                 // Blood moon
                 case NPCID.BloodSquid:
                 case NPCID.Drippler:
                 case NPCID.BloodZombie:
-                    texts.Add("So much blood!");
+                    texts.Add("This blood moon brings such turmoil...");
                     break;
 
                 // Corruption
                 case NPCID.EaterofSouls:
-                    texts.Add("Disgusting!");
-                    texts.Add("Go eat someone else's soul!");
-                    texts.Add("Die!");
+                    texts.Add("It's dead.");
                     break;
                 case NPCID.Corruptor:
-                    texts.Add("Disgusting!");
-                    texts.Add("Die!");
+                    texts.Add("It's been dispelled.");
                     break;
                 case NPCID.Wraith:
-                    texts.Add("How creepy.");
-                    texts.Add("Terrifying beings...");
+                    texts.Add("Wandering spirit, may you find your way...");
                     break;
 
                 // Underworld
                 case NPCID.FireImp:
-                    texts.Add("Mischevous little thing!");
+                    texts.Add("I got it.");
                     break;
 
                 // Crimson
                 case NPCID.FaceMonster:
-                    texts.Add("How terrifying...");
-                    texts.Add("These things are terrifying!");
-                    break;
                 case NPCID.Crimera:
-                    texts.Add("Disgusting!");
-                    break;
                 case NPCID.IchorSticker:
-                    texts.Add("Ew, disgusting!");
-                    texts.Add("These ones give me the creeps...");
+                    texts.Add("So terrifying...");
                     break;
 
                 // Hallow
                 case NPCID.EnchantedSword:
-                    texts.Add("These flying swords sure are dangerous.");
+                    texts.Add("How do  they hold so much energy?");
                     break;
                 case NPCID.Gastropod:
-                    texts.Add("These things would be cuter if they didn't shoot lasers.");
-                    texts.Add("How do these things even shoot lasers?");
-                    texts.Add("They're kinda cute...");
+                    texts.Add("I wish I could study these ones...");
                     break;
                 case NPCID.Unicorn:
-                    texts.Add("I used to want to ride a unicorns as a kid...");
+                    texts.Add("Magnificent creatures, unicorns...");
                     break;
 
                 // Sky
                 case NPCID.Harpy:
-                    texts.Add("They almost look human...");
+                    texts.Add("These ones frighten me...");
                     break;
 
                 // Others
                 case NPCID.Ghost:
-                    texts.Add("Creepy...");
+                    texts.Add("Rest in peace, wayward spirit...");
                     break;
                 case NPCID.BlueSlime:
                 case NPCID.GreenSlime:
                 case NPCID.DungeonSlime:
                 case NPCID.MotherSlime:
                 case NPCID.BlackSlime:
-                    texts.Add("So... squishy...");
-                    texts.Add("Ugh... so sticky...");
-                    texts.Add("I swear I smell like gel...");
-                    break;
                 case NPCID.IceSlime:
-                    texts.Add("At least ice slimes aren't so sticky.");
+                    texts.Add("I think have gel in my hair.");
                     break;
                 case NPCID.WallCreeper:
                 case NPCID.BloodCrawler:
-                    texts.Add("(Shivers) I hate those things...");
-                    texts.Add("Gosh I hate these bugs!");
-                    texts.Add("So creepy...");
+                    texts.Add("I hate these things...");
                     break;
 
                 // Goblin Army
@@ -551,17 +391,7 @@ An orphaned warrior in training who excels at close quarters combat and tanking.
                 case NPCID.GoblinScout:
                 case NPCID.GoblinSorcerer:
                 case NPCID.GoblinThief:
-                    texts.Add("There are so many of them!");
-                    texts.Add("They're weak, but they're plentiful!");
-                    texts.Add("There's a lot of them!");
-                    texts.Add("Weak!");
-                    break;
-
-                // Underground
-                case NPCID.GiantWormBody:
-                case NPCID.GiantWormHead:
-                case NPCID.GiantWormTail:
-                    texts.Add("Ugh, I hate worms.");
+                    texts.Add("There are a lot of them.");
                     break;
             }
 
@@ -687,12 +517,13 @@ An orphaned warrior in training who excels at close quarters combat and tanking.
             RandomDialogueTimer = rng.Next(RandomDialogueWaitTimeMin, RandomDialogueWaitTimeMax);
 
             List<string> msgs = new List<string>();
-            msgs.Add("Ever wonder who leaves all the chests around?");
-            msgs.Add("Did you see that shooting star last night?");
-            msgs.Add("I wonder where slime comes from...");
-            msgs.Add("I wish I could train all day.");
-            msgs.Add("I'd kill for some bacon right now.");
-            msgs.Add("You ever get the feeling that we're being watched?");
+            msgs.Add("Wish I had a book to read right now...");
+            msgs.Add("I wonder what spell I should learn next?");
+            msgs.Add("*Sneezes*");
+            msgs.Add("*Yawns*");
+            msgs.Add("*Hums*");
+            msgs.Add("Mm... cake would be nice...");
+            msgs.Add("Do you have any sweets?");
 
             // Friendship Messages
             if (companion.FriendshipLevel > 5)
@@ -742,83 +573,82 @@ An orphaned warrior in training who excels at close quarters combat and tanking.
             }
 
             // Situational Messages
+            Player player = MainMod.GetLocalPlayer;
+            if (player.statLife < player.statLifeMax2 * 0.4) // Player is at 25% health or less
+            {
+                msgs.Add("You're really beat up, maybe we should hang back a bit.");
+                msgs.Add("Hey, take a potion before you faint!");
+            }
+
             // Number of enemies
 
             // Biome Messages
             if (Player.ZoneBeach)
             {
-                msgs.Add("I love going to the beach!");
-                msgs.Add("The beach is always nice to be at.");
+                msgs.Add("Uh, so much sand...");
+                msgs.Add("I think I have sand in my shoes.");
             }
             if (Player.ZoneSnow)
             {
-                msgs.Add("*Shivers* So cold!");
+                msgs.Add("*Sneezes*");
+                msgs.Add("So cold!");
             }
             if (Player.ZoneSnow && Player.ZoneRain)
             {
-                msgs.Add("It's freezing!");
-                msgs.Add("I can barely see here...");
+                msgs.Add("I can't read in a place like this...");
+                msgs.Add("I can't see!");
             }
             if (Player.ZoneCorrupt)
             {
-                msgs.Add("Stay on your guard here.");
-                msgs.Add("This place gives me the creeps!");
-                msgs.Add("I feel like I'm being watched.");
-                msgs.Add("We musn't let this Corruption spread.");
+                msgs.Add("I don't like this place.");
+                msgs.Add("There's strong magic here.");
             }
             if (Player.ZoneCrimson)
             {
-                msgs.Add("Man, this place is disgusting.");
-                msgs.Add("Gosh, the smell of this place!");
-                msgs.Add("I feel like I'm being watched.");
-                msgs.Add("We musn't let this Crimson spread.");
+                msgs.Add("That smell...");
+                msgs.Add("I hate this place.");
             }
             if (Player.ZoneDesert)
             {
-                msgs.Add("So hot...");
+                msgs.Add("It's hot.");
                 msgs.Add("I think there's sand in my shoes.");
             }
             if (Player.ZoneSandstorm)
             {
-                msgs.Add("I can barely see in front of me!");
-                msgs.Add("Try not to get sand in your eyes.");
+                msgs.Add("I can barely see in here.");
             }
             if (Player.ZoneJungle)
             {
-                msgs.Add("It's so humid in here.");
-                msgs.Add("So many bugs!");
-                msgs.Add("I think I got bitten by something.");
-                msgs.Add("Monsters here are pretty strong.");
+                msgs.Add("Ow, I think I got bit.");
             }
             if (Player.ZoneGlowshroom)
             {
-                msgs.Add("Mm... mushrooms.");
+                msgs.Add("I wonder what potions I could make with glowshrooms...");
             }
             if (Player.ZoneMeteor)
             {
-                msgs.Add("Glad this space rock didn't fall on me.");
+                msgs.Add("This strange rock has some magic in it...");
             }
             if (Player.ZoneUnderworldHeight)
             {
-                msgs.Add("It's really hot, isn't it?");
-                msgs.Add("These demons and imps give me the creeps.");
-                msgs.Add("Mm, I love lava.");
+                msgs.Add("The magic here is very strong.");
+                msgs.Add("Demonic magic is powerful, I wish to study it.");
             }
             if (Player.ZoneHallow)
             {
-                msgs.Add("What a magical place.");
-                msgs.Add("What a pretty place.");
+                msgs.Add("There's magic in almost everything here...");
+                msgs.Add("How pretty.");
             }
             if (Player.ZoneDungeon)
             {
-                msgs.Add("Be on your guard, there could be traps about.");
-                msgs.Add("I wonder what we can find here?");
+                msgs.Add("I wonder what grimoires are here?");
+                msgs.Add("There's bound to be a spell book somewhere.");
+                msgs.Add("I wouldn't mind staying here for a while.");
                 seenDungeonBiome = true;
             }
             if (Player.ZoneSkyHeight)
             {
-                msgs.Add("Wow, you can almost touch the clouds up here!");
-                msgs.Add("I hope I don't slip and fall...");
+                msgs.Add("I can see the stars.");
             }
             string msg = msgs[rng.Next(msgs.Count)];
             companion.SaySomething(msg, true);
@@ -851,7 +681,7 @@ An orphaned warrior in training who excels at close quarters combat and tanking.
         public void OnBossStart(NPC spawnedNpc, IEntitySource source)
         {
             if (!spawnedNpc.boss) { return; }
-            terraguardians.Companion companion = Companion;
+            terraguardians.Companion companion = terraguardians.MainMod.GetActiveCompanions.FirstOrDefault(c => c.Base.Equals(this));
             if (companion == null) { return; }
             if (!companion.IsFollower) { return; }
             if (companion.KnockoutStates > KnockoutStates.Awake) { return; } // Don't speak if unconcious

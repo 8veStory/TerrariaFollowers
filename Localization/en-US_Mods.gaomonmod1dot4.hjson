@@ -8,6 +8,11 @@ Items: {
 		DisplayName: Glory Bag
 		Tooltip: ""
 	}
+
+	HecateBag: {
+		DisplayName: Hecate Bag
+		Tooltip: ""
+	}
 }
 
 Projectiles.GaoPunch.DisplayName: Gao Punch

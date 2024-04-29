@@ -1,12 +1,23 @@
 # Todos
-- [ ] Buddy Dialogue
+- [ ] Fix the onDeath messages
+- [ ] Fix the onPlayerDeath messages
+- [ ] Add underground messages
+- [ ] Redo some Glory random dialogue
+
 - [ ] Basic dialogue tree
 	- [ ] What do you think of me so far?
-	- [ ] Have any tips for me?
-		- [ ] Steal guide shit
 	- [ ] Where are you from?
 	- [ ] Birthday?
 	- [ ] Where did you learn to fight?
+
+- [ ] Glory Quests
+	- [ ] Iron Broadsword
+	- [ ] Armour greater than 20
+
+- [ ] Hecate Quests
+	- [ ] Another staff (Topaz or greater).
+	- [ ] Water Bolt
+	- [ ] Demon Scythe Spellbook
 - [ ] Spawns at the beginning
 - [ ] Ask A to improve writing if possible and what his pointers are
  s ee if you can usthe getLocalPlayer to actually check if Glory has killed the enemy!
