@@ -1,6 +1,10 @@
 # Todos
 - [ ] Add underground messages
 
+- [ ] Revamp the Glory dialogues by asking ChatGPT
+	- [ ] Prompt for Amber/Determined young girl
+
+
 - [ ] Basic dialogue tree
 	- [ ] What do you think of me so far?
 	- [ ] Where are you from?

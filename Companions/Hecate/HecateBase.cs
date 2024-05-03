@@ -171,7 +171,7 @@ A young, promising mage who keeps to herself.
             {
                 "No, [nickname]!",
                 "Stay with us, [nickname]!",
-                $"[nickname], I won't let this be the end!"
+                $"[nickname], no..."
             };
             string text = texts[rng.Next(texts.Count)];
             companion.SaySomething(text, true);
@@ -186,7 +186,6 @@ A young, promising mage who keeps to herself.
                 "I guess this is it...",
                 "I still want to learn more...",
                 "Forgive me, everyone...",
-                "Forgive me, everyone...",
             };
             string text = texts[rng.Next(texts.Count)];
             companion.SaySomething(text, true);
@@ -197,50 +196,40 @@ A young, promising mage who keeps to herself.
         {
             if (!companion.IsFollower) { return; }
             // CRITTERS
-            switch (npc.type)
-            {
-                case NPCID.Goldfish:
-                case NPCID.Bunny:
-                case NPCID.Bird:
-                case NPCID.Duck:
-                case NPCID.Duck2:
-                case NPCID.DuckWhite:
-                case NPCID.DuckWhite2:
-                    return;
-            }
+            if (npc.CountsAsACritter) { return; }
 
             switch (npc.type)
             {
                 case NPCID.EyeofCthulhu:
-                    companion.SaySomething("We did well. That was a test of our resolve.", true); return;
+                    companion.SaySomething("It's over? Thank goodness.", true); return;
                 case NPCID.KingSlime:
-                    companion.SaySomething("Such a messy ordeal...", true); return;
+                    companion.SaySomething("So messy...", true); return;
                 case NPCID.EaterofWorldsHead:
-                    companion.SaySomething("We've restored a bit more balance today.", true); return;
+                    companion.SaySomething("The worm was much longer than my book described...", true); return;
                 case NPCID.BrainofCthulhu:
-                    companion.SaySomething("Well done everyone.", true); return;
+                    companion.SaySomething("Thank goodness, I can think again...", true); return;
                 case NPCID.QueenBee:
-                    companion.SaySomething("Certainly a tough opponent, but manageable.", true); return;
+                    companion.SaySomething("I heard its honey is particularly useful...", true); return;
                 case NPCID.SkeletronHead:
-                    companion.SaySomething("Womp womp.", true); return;
+                    companion.SaySomething("What an interesting curse...", true); return;
                 case NPCID.Deerclops:
-                    companion.SaySomething("Such an odd creature... I hope it finds peace.", true); return;
+                    companion.SaySomething("There's no creature like that in my book...", true); return;
                 case NPCID.WallofFlesh:
-                    companion.SaySomething("The world has changed... Can you feel it?", true); return;
+                    companion.SaySomething("The world is different... I can feel it.", true); return;
                 case NPCID.WyvernHead:
-                    companion.SaySomething("Its grace in the sky was almost enchanting...", true); return;
+                    companion.SaySomething("Could it have been guarding something, I wonder?", true); return;
                 case NPCID.Retinazer:
-                    companion.SaySomething("We have ended their watch. Well done, [nickname].", true); return;
+                    companion.SaySomething("I wonder who made them...", true); return;
                 case NPCID.QueenSlimeBoss:
-                    companion.SaySomething("That was... unexpectedly sticky.", true); return;
+                    companion.SaySomething("That was... really sticky.", true); return;
                 case NPCID.HallowBoss:
-                    companion.SaySomething("It’s sad, yet necessary to maintain balance.", true); return;
+                    companion.SaySomething("I feel bad for killing her.", true); return;
                 case NPCID.TheDestroyer:
-                    companion.SaySomething("Together, we've overcome great adversity, [nickname].", true); return;
+                    companion.SaySomething("Yahoo", true); return;
                 case NPCID.SkeletronPrime:
                     companion.SaySomething("A commendable effort, [nickname].", true); return;
                 case NPCID.Plantera:
-                    companion.SaySomething("That was a challenging trial...", true); return;
+                    companion.SaySomething("I'll be studying this plant tissue...", true); return;
                 case NPCID.Golem:
                     companion.SaySomething("Victory, at last! We did it together.", true); return;
                 case NPCID.DukeFishron:

@@ -217,6 +217,8 @@ An orphaned warrior in training who excels at close quarters combat and tanking.
                 if (Companion.whoAmI == player.whoAmI) {
                     Main.NewText("It's GLORY!");
                     OnCompanionAttacked(hurtInfo.Damage);
+                } else {
+                    Main.NewText("IT's ANOHTER COMPANIONA;");
                 }
                 return;
             }
@@ -248,6 +250,7 @@ An orphaned warrior in training who excels at close quarters combat and tanking.
                 OnPlayerHitDialogueTimer = OnPlayerHitDialogueWaitTime;
                 texts.Add("Hey, take a potion before you faint!");
                 texts.Add("You're hurt!");
+                texts.Add("[nickname], watch out!");
                 text = texts[rng.Next(texts.Count)];
                 Companion.SaySomething(text, Companion.IsFollower);
             } else {
@@ -271,7 +274,7 @@ An orphaned warrior in training who excels at close quarters combat and tanking.
                 texts.Add("No... Not now...");
                 texts.Add("Damn it...");
                 texts.Add("It's dark...");
-                texts.Add("Not again... I can't let...");
+                texts.Add("Not again... I...");
                 text = texts[rng.Next(texts.Count)];
                 companion.SaySomething(text, companion.IsFollower);
                 return;
@@ -425,16 +428,11 @@ An orphaned warrior in training who excels at close quarters combat and tanking.
                     companion.SaySomething("She had a really pretty dress...", true);
                     GenericNpcDeathDialogueTimer = GenericNPCDefeatWaitTime;
                     return;
-                case NPCID.TheGroom:
-                    companion.SaySomething("That one had a fancy suit on.", true);
-                    GenericNpcDeathDialogueTimer = GenericNPCDefeatWaitTime;
-                    return;
                 case NPCID.Nymph:
                     {
                         List<string> msgs = new List<string>
                         {
-                            "What a dangerous creature...",
-                            "That creature tried to trick us!"
+                            "I really thought she was friendly at first...",
                         };
                         string msg = msgs[rng.Next(msgs.Count)];
                         companion.SaySomething(msg, true);
@@ -497,18 +495,16 @@ An orphaned warrior in training who excels at close quarters combat and tanking.
                     break;
                 case NPCID.Wraith:
                     texts.Add("How creepy.");
-                    texts.Add("Terrifying beings...");
                     break;
 
                 // Underworld
                 case NPCID.FireImp:
-                    texts.Add("Mischevous little thing!");
+                    texts.Add("Little rat.");
                     break;
 
                 // Crimson
                 case NPCID.FaceMonster:
                     texts.Add("How terrifying...");
-                    texts.Add("These things are terrifying!");
                     break;
                 case NPCID.Crimera:
                     texts.Add("Disgusting!");
@@ -520,7 +516,7 @@ An orphaned warrior in training who excels at close quarters combat and tanking.
 
                 // Hallow
                 case NPCID.EnchantedSword:
-                    texts.Add("These flying swords sure are dangerous.");
+                    texts.Add("Where can I get a sword like that?");
                     break;
                 case NPCID.Gastropod:
                     texts.Add("These things would be cuter if they didn't shoot lasers.");
@@ -568,7 +564,6 @@ An orphaned warrior in training who excels at close quarters combat and tanking.
                     texts.Add("There are so many of them!");
                     texts.Add("They're weak, but they're plentiful!");
                     texts.Add("There's a lot of them!");
-                    texts.Add("Weak!");
                     break;
 
                 // Underground
@@ -602,81 +597,67 @@ An orphaned warrior in training who excels at close quarters combat and tanking.
         public bool seenUnderworldBiome;
         public void OnBiomePrompt(terraguardians.Companion companion)
         {
+            List<string> texts = new List<string>();
+            string text;
             if (Player.ZoneBeach && !seenBeachBiome)
             {
                 companion.SaySomething("Wow, the ocean... It's so beautiful!", true);
                 seenBeachBiome = true;
-            }
-            if (Player.ZoneSnow && !seenSnowBiome)
+            } else if (Player.ZoneSnow && !seenSnowBiome)
             {
-                companion.SaySomething("It's cold... if anything can survive this extreme weather, it must be tougher than normal.", true);
+                companion.SaySomething("Look, Snow! If anything can survive this extreme weather, it must be tougher than normal.", true);
                 seenSnowBiome = true;
-            }
-            if (Player.ZoneSnow && Player.ZoneRain && !seenSnow)
+            } else if (Player.ZoneSnow && Player.ZoneRain && !seenSnow)
             {
                 companion.SaySomething("A blizzard. Try and keep warm, [nickname].", true);
                 seenSnow = true;
-            }
-            if (Player.ZoneCorrupt && !seenCorruptionBiome)
+            } else if (Player.ZoneCorrupt && !seenCorruptionBiome)
             {
-                companion.SaySomething("I can feel the evil aura here... stay close to me, [nickname], we're being watched.", true);
+                companion.SaySomething("I can feel the evil aura in this place... stay close to me, [nickname], we're being watched.", true);
                 seenCorruptionBiome = true;
-            }
-            if (Player.ZoneCrimson && !seenCrimsonBiome)
+            } else if (Player.ZoneCrimson && !seenCrimsonBiome)
             {
-                companion.SaySomething("Gods that smell... is this... flesh...? Don't get separated from me, [nickname].", true);
+                companion.SaySomething("Gods that smell... is this... flesh...?", true);
                 seenCrimsonBiome = true;
-            }
-            if (Player.ZoneDesert && !seenDesertBiome)
+            } else if (Player.ZoneDesert && !seenDesertBiome)
             {
-                companion.SaySomething("Wow it's hot... I should have brought sunglasses.", true);
+                companion.SaySomething("A desert!", true);
                 seenDesertBiome = true;
-            }
-            if (Player.ZoneSandstorm && !seenSandstorm)
+            } else if (Player.ZoneSandstorm && !seenSandstorm)
             {
                 companion.SaySomething("A sandstorm! Try not to get any in your eyes.", true);
                 seenSandstorm = true;
-            }
-            if (Player.ZoneJungle && !seenJungleBiome)
+            } else if (Player.ZoneJungle && !seenJungleBiome)
             {
                 companion.SaySomething("It's the Jungle. Watch out, [nickname], I've heard this place is really dangerous.", true);
                 seenJungleBiome = true;
-            }
-            if (Player.ZoneGlowshroom && !seenGlowingMushroomBiome)
+            } else if (Player.ZoneGlowshroom && !seenGlowingMushroomBiome)
             {
                 companion.SaySomething("Are those... glowing mushrooms? It's beautiful...", true);
                 seenGlowingMushroomBiome = true;
-            }
-            if (Player.ZoneMeteor && !seenMeteoriteBiome)
+            } else if (Player.ZoneMeteor && !seenMeteoriteBiome)
             {
                 companion.SaySomething("Looks like you could make something useful out of this hunk of space rock.", true);
                 seenMeteoriteBiome = true;
-            }
-            if (Player.ZoneUnderworldHeight && !seenUnderworldBiome)
+            } else if (Player.ZoneUnderworldHeight && !seenUnderworldBiome)
             {
-                companion.SaySomething("So this is where the souls of the dead go to rest... It's horrible...", true);
+                companion.SaySomething("We've reached the Underworld, where dead souls rest...", true);
                 seenUnderworldBiome = true;
-            }
-            if (Player.ZoneHallow && !seenHallowBiome)
+            } else if (Player.ZoneHallow && !seenHallowBiome)
             {
-                companion.SaySomething("This place looks so magical! The inhabitants don't look too happy to see us though.", true);
+                companion.SaySomething("What a magical place.", true);
                 seenHallowBiome = true;
-            }
-            if (Player.ZoneSkyHeight && !seenSpaceBiome)
+            } else if (Player.ZoneSkyHeight && !seenSpaceBiome)
             {
-                List<string> texts = new List<string>
-                {
-                    "The stars are really beautiful, aren't they?",
-                    "It's like I can almost touch the clouds uyp here!",
-                    "I hope I don't slip and fall..."
-                };
-                string text = texts[rng.Next(texts.Count)];
+                texts.Add("The stars are really beautiful, aren't they?");
+                texts.Add("It's like I can almost touch the clouds up here!");
+                texts.Add("I hope I don't slip and fall...");
+                text = texts[rng.Next(texts.Count)];
                 companion.SaySomething(text, true);
                 seenSpaceBiome = true;
-            }
-            if (Player.ZoneDungeon && !seenDungeonBiome)
+            } else if (Player.ZoneDungeon && !seenDungeonBiome)
             {
-                companion.SaySomething("I've heard the Dungeon holds powerful grimoires and swords... as well as challenging traps and foes. Stay vigilant!", true);
+                companion.SaySomething("It's the dungeon! I hear it's as bountiful as it is dangerous.", true);
                 seenDungeonBiome = true;
             }
         }
@@ -693,11 +674,10 @@ An orphaned warrior in training who excels at close quarters combat and tanking.
 
             List<string> msgs = new List<string>();
             msgs.Add("Ever wonder who leaves all the chests around?");
-            msgs.Add("Did you see that shooting star last night?");
             msgs.Add("I wonder where slime comes from...");
             msgs.Add("I wish I could train all day.");
-            msgs.Add("I'd kill for some bacon right now.");
             msgs.Add("You ever get the feeling that we're being watched?");
+            msgs.Add("*Hums*");
 
             // Friendship Messages
             if (companion.FriendshipLevel > 5)
@@ -711,16 +691,19 @@ An orphaned warrior in training who excels at close quarters combat and tanking.
             }
 
             // Environmental Messages
+            bool isUnderground = Player.ZoneDirtLayerHeight || Player.ZoneRockLayerHeight || Player.ZoneUnderworldHeight;
+            int CompanionsCount = WorldMod.GetCompanionsCount;
+            bool HasCompanions = CompanionsCount > 0;
             if (Main.bloodMoon)
             {
                 msgs.Add("There are a lot of enemies around.");
                 msgs.Add("Keep your guard up.");
                 msgs.Add("I hate nights like these.");
             }
-            else
+            else if (isUnderground) {
+
+            }
             {
-                int CompanionsCount = WorldMod.GetCompanionsCount;
-                bool HasCompanions = CompanionsCount > 0;
                 if (Main.dayTime)
                 {
                     if (Main.eclipse)
@@ -754,73 +737,58 @@ An orphaned warrior in training who excels at close quarters combat and tanking.
             {
                 msgs.Add("I love going to the beach!");
                 msgs.Add("The beach is always nice to be at.");
-            }
-            if (Player.ZoneSnow)
-            {
-                msgs.Add("*Shivers* So cold!");
-            }
-            if (Player.ZoneSnow && Player.ZoneRain)
+            } else if (Player.ZoneSnow && Player.ZoneRain)
             {
                 msgs.Add("It's freezing!");
                 msgs.Add("I can barely see here...");
-            }
-            if (Player.ZoneCorrupt)
+            } else if (Player.ZoneSnow)
+            {
+                msgs.Add("*Shivers* So cold!");
+            } else if (Player.ZoneCorrupt)
             {
                 msgs.Add("Stay on your guard here.");
                 msgs.Add("This place gives me the creeps!");
                 msgs.Add("I feel like I'm being watched.");
                 msgs.Add("We musn't let this Corruption spread.");
-            }
-            if (Player.ZoneCrimson)
+            } else if (Player.ZoneCrimson)
             {
                 msgs.Add("Man, this place is disgusting.");
                 msgs.Add("Gosh, the smell of this place!");
                 msgs.Add("I feel like I'm being watched.");
                 msgs.Add("We musn't let this Crimson spread.");
-            }
-            if (Player.ZoneDesert)
+            } else if (Player.ZoneDesert)
             {
                 msgs.Add("So hot...");
                 msgs.Add("I think there's sand in my shoes.");
-            }
-            if (Player.ZoneSandstorm)
+            } else if (Player.ZoneSandstorm)
             {
                 msgs.Add("I can barely see in front of me!");
                 msgs.Add("Try not to get sand in your eyes.");
-            }
-            if (Player.ZoneJungle)
+            } else if (Player.ZoneJungle)
             {
                 msgs.Add("It's so humid in here.");
                 msgs.Add("So many bugs!");
                 msgs.Add("I think I got bitten by something.");
                 msgs.Add("Monsters here are pretty strong.");
-            }
-            if (Player.ZoneGlowshroom)
+            } else if (Player.ZoneGlowshroom)
             {
                 msgs.Add("Mm... mushrooms.");
-            }
-            if (Player.ZoneMeteor)
+            } else if (Player.ZoneMeteor)
             {
                 msgs.Add("Glad this space rock didn't fall on me.");
-            }
-            if (Player.ZoneUnderworldHeight)
+            } else if (Player.ZoneUnderworldHeight)
             {
-                msgs.Add("It's really hot, isn't it?");
-                msgs.Add("These demons and imps give me the creeps.");
-                msgs.Add("Mm, I love lava.");
-            }
-            if (Player.ZoneHallow)
+                msgs.Add("Do you think the dead are watching us?");
+            } else if (Player.ZoneHallow)
             {
                 msgs.Add("What a magical place.");
                 msgs.Add("What a pretty place.");
-            }
-            if (Player.ZoneDungeon)
+            } else if (Player.ZoneDungeon)
             {
                 msgs.Add("Be on your guard, there could be traps about.");
                 msgs.Add("I wonder what we can find here?");
                 seenDungeonBiome = true;
-            }
-            if (Player.ZoneSkyHeight)
+            } else if (Player.ZoneSkyHeight)
             {
                 msgs.Add("Wow, you can almost touch the clouds up here!");
                 msgs.Add("I hope I don't slip and fall...");
@@ -895,7 +863,7 @@ An orphaned warrior in training who excels at close quarters combat and tanking.
                     break;
                 case NPCID.Deerclops:
                     if (seenDeerclops) { return; }
-                    companion.SaySomething("What the heck is that?! Be on your guard!", true);
+                    companion.SaySomething("What the heck is that?!", true);
                     seenDeerclops = true;
                     break;
                 case NPCID.WallofFlesh:

@@ -50,30 +50,39 @@ namespace gaomonmod1dot4.Companions.Glory
                 Mes.Add("Oh, you're checking up on me? I'm fine, really, thanks for asking.");
                 Mes.Add("Oh, you're checking up on me, [nickname]? I'm fine, really, thanks for asking.");
 
+                Player player = Main.LocalPlayer;
                 bool HasCompanions = CompanionsCount > 0;
-                if (Main.dayTime)
+                bool isUnderground = player.ZoneDirtLayerHeight || player.ZoneRockLayerHeight || player.ZoneUnderworldHeight;
+                if (isUnderground)
                 {
-                    if (Main.eclipse)
-                    {
-                        Mes.Add("(She gazes up at the eclipse, brows furrowed in worry, but ready to fight)");
-                        Mes.Add("Do you see what happened to the Sun? Something bad is happening...");
-                    }
-                    else
-                    {
-                        Mes.Add("It's nice to be in the Sun, wouldn't you agree?");
-                        Mes.Add("Vitamin D sure is nice.");
-                    }
+
                 }
                 else
                 {
-                    Mes.Add("I surely would like to take a nice nap and enjoy this night. What about you?");
-                    Mes.Add("You going to try and get a good rest tonight, [nickname]?");
-                    Mes.Add("Don't work too hard, [nickname], breaks are important too.");
-                }
-                if (Main.raining)
-                {
-                    Mes.Add("I always loved rain. I used to run outside in it as a kid all the time. I always got sick, mind you, but it was good fun.");
-                    Mes.Add("Training in the rain gives a whole new vibe to it. You should try it sometime!");
+                    if (Main.dayTime)
+                    {
+                        if (Main.eclipse)
+                        {
+                            Mes.Add("(She gazes up at the eclipse, brows furrowed in worry, but ready to fight)");
+                            Mes.Add("Do you see what happened to the Sun?");
+                        }
+                        else
+                        {
+                            Mes.Add("It's nice to be in the Sun, wouldn't you agree?");
+                            Mes.Add("Vitamin D sure is nice.");
+                        }
+                    }
+                    else
+                    {
+                        Mes.Add("I surely would like to take a nice nap and enjoy this night. What about you?");
+                        Mes.Add("You going to try and get a good rest tonight, [nickname]?");
+                        Mes.Add("Don't work too hard, [nickname], breaks are important too.");
+                    }
+                    if (Main.raining)
+                    {
+                        Mes.Add("I always loved rain. I used to run outside in it as a kid all the time. I always got sick, mind you, but it was good fun.");
+                        Mes.Add("Training in the rain gives a whole new vibe to it. You should try it sometime!");
+                    }
                 }
 
                 if (NPC.AnyNPCs(Terraria.ID.NPCID.Stylist))
@@ -126,10 +135,6 @@ namespace gaomonmod1dot4.Companions.Glory
                     Mes.Add("The stuff [nn:" + Terraria.ID.NPCID.Steampunker + "] makes is amazing! I never knew such technology existed...");
                 }
 
-                if (CompanionsCount >= 1 && CompanionsCount < 3)
-                {
-                    Mes.Add("It's pretty dangerous around here, [nickname]. If we could find more people to join us we could keep each other safe.");
-                }
                 if (CompanionsCount >= 3)
                 {
                     Mes.Add("Thank you for your effort in building the town, [nickname], it's wonderful having people around.");
@@ -148,7 +153,7 @@ namespace gaomonmod1dot4.Companions.Glory
             if (terraguardians.PlayerMod.IsHauntedByFluffles(MainMod.GetLocalPlayer) && Main.rand.NextDouble() < 0.75)
             {
                 Mes.Clear();
-                Mes.Add("Why there is a TerraGuardian on your shoulder?");
+                Mes.Add("What is that TerraGuardian on your shoulder?");
             }
             return Mes[Main.rand.Next(Mes.Count)];
         }
@@ -164,14 +169,14 @@ namespace gaomonmod1dot4.Companions.Glory
 
         public override string RequestMessages(terraguardians.Companion companion, RequestContext context) //Messages regarding requests. The contexts are used to let you know which cases the message will use.
         {
-            switch(context)
+            switch (context)
             {
                 case RequestContext.NoRequest:
                     {
                         List<string> Mes = new List<string>();
                         Mes.Add("I'm fine right now, [nickname], but thank you for asking!");
-						Mes.Add("That's nice of you to ask! But, I'm good [nickname].");
-						Mes.Add("I'm fine for now. Are you sure there isn't anything I can do for you?");
+                        Mes.Add("That's nice of you to ask! But, I'm good [nickname].");
+                        Mes.Add("I'm fine for now. Are you sure there isn't anything I can do for you?");
                         return Mes[Terraria.Main.rand.Next(Mes.Count)];
                     }
                 case RequestContext.HasRequest:
@@ -184,8 +189,8 @@ namespace gaomonmod1dot4.Companions.Glory
                     {
                         List<string> Mes = new List<string>();
                         Mes.Add("Amazing! Thank you [nickname], you're always so reliable. Here, what would you like?");
-						Mes.Add("Thank you so much [nickname], you're a great help. Here, you can have some of my loot.");
-						Mes.Add("Thank you [nickname]! You deserve a reward.");
+                        Mes.Add("Thank you so much [nickname], you're a great help. Here, you can have some of my loot.");
+                        Mes.Add("Thank you [nickname]! You deserve a reward.");
                         return Mes[Terraria.Main.rand.Next(Mes.Count)];
                     }
                 case RequestContext.Accepted:
@@ -221,7 +226,7 @@ namespace gaomonmod1dot4.Companions.Glory
 
         public override string AskCompanionToMoveInMessage(terraguardians.Companion companion, MoveInContext context)
         {
-            switch(context)
+            switch (context)
             {
                 case MoveInContext.Success:
                     return "Sure! I'll stick with you at your town.";
@@ -235,7 +240,7 @@ namespace gaomonmod1dot4.Companions.Glory
 
         public override string AskCompanionToMoveOutMessage(terraguardians.Companion companion, MoveOutContext context)
         {
-            switch(context)
+            switch (context)
             {
                 case MoveOutContext.Success:
                     return "Oh, okay, I can do that...";
@@ -249,7 +254,7 @@ namespace gaomonmod1dot4.Companions.Glory
 
         public override string JoinGroupMessages(terraguardians.Companion companion, JoinMessageContext context)
         {
-            switch(context)
+            switch (context)
             {
                 case JoinMessageContext.Success:
                     return "Gladly! Stay close to me [nickname], I'll keep you safe.";
@@ -263,7 +268,7 @@ namespace gaomonmod1dot4.Companions.Glory
 
         public override string LeaveGroupMessages(terraguardians.Companion companion, LeaveMessageContext context)
         {
-            switch(context)
+            switch (context)
             {
                 case LeaveMessageContext.Success:
                     return "You know where to find me. Stay safe, [nickname]!";
@@ -375,9 +380,9 @@ namespace gaomonmod1dot4.Companions.Glory
             switch (context)
             {
                 case BuddiesModeContext.AskIfPlayerIsSure:
-                    return "Are you sure? Bonding is a serious thing... I would never leave the side of my buddy.";
+                    return "Are you sure? Bonding is a serious thing... I would never leave the side of my bondmate.";
                 case BuddiesModeContext.PlayerSaysYes:
-                    return "I'll be by your side for as long as you need!";
+                    return "I'm glad! I'll be by your side for as long as you need!";
                 case BuddiesModeContext.PlayerSaysNo:
                     return "Okay, [nickname].";
                 case BuddiesModeContext.NotFriendsEnough:

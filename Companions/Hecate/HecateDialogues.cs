@@ -10,7 +10,7 @@ namespace gaomonmod1dot4.Companions.Hecate
         public override string GreetMessages(terraguardians.Companion companion) //Messages for when you just met the companion.
         {
             List<string> Mes = new List<string>();
-            Mes.Add("(You see a young warrior, confident and capable) Oh, another traveller? Nice to meet you, I'm Glory! It's a dangerous world as of recent, so if you need help putting down monsters, I'm your girl.");
+            Mes.Add("(She's engrossed in a spellbook before realising you're there) Oh, hello... I was just lost in my thoughts again. I'm Hecate. I'm very much interested in the magic of this land. Say... would you be open to exploring it together? I can offer my magical assistance if you bring me on your adventures?");
             return Mes[Main.rand.Next(Mes.Count)];
         }
 
